@@ -1,0 +1,240 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { TodoItem } from './TodoItem'
+
+describe('TodoItem', () => {
+  const baseTodo = {
+    id: 'test-id-123',
+    title: 'Test todo',
+    completed: false,
+    dueDate: null,
+    createdAt: '2024-01-01T00:00:00.000Z',
+  }
+
+  const defaultProps = {
+    todo: baseTodo,
+    onToggle: vi.fn(),
+    onDelete: vi.fn(),
+    onEdit: vi.fn(),
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  describe('rendering', () => {
+    it('renders the todo title', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.getByText('Test todo')).toBeInTheDocument()
+    })
+
+    it('renders a checkbox', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.getByRole('checkbox')).toBeInTheDocument()
+    })
+
+    it('renders edit button', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument()
+    })
+
+    it('renders delete button', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument()
+    })
+
+    it('checkbox is unchecked when todo is not completed', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.getByRole('checkbox')).not.toBeChecked()
+    })
+
+    it('checkbox is checked when todo is completed', () => {
+      const completedTodo = { ...baseTodo, completed: true }
+      render(<TodoItem {...defaultProps} todo={completedTodo} />)
+
+      expect(screen.getByRole('checkbox')).toBeChecked()
+    })
+  })
+
+  describe('interactions', () => {
+    it('calls onToggle with todo id when checkbox is clicked', async () => {
+      const user = userEvent.setup()
+      const onToggle = vi.fn()
+      render(<TodoItem {...defaultProps} onToggle={onToggle} />)
+
+      await user.click(screen.getByRole('checkbox'))
+
+      expect(onToggle).toHaveBeenCalledTimes(1)
+      expect(onToggle).toHaveBeenCalledWith('test-id-123')
+    })
+
+    it('calls onDelete with todo id when delete button is clicked', async () => {
+      const user = userEvent.setup()
+      const onDelete = vi.fn()
+      render(<TodoItem {...defaultProps} onDelete={onDelete} />)
+
+      await user.click(screen.getByRole('button', { name: /delete/i }))
+
+      expect(onDelete).toHaveBeenCalledTimes(1)
+      expect(onDelete).toHaveBeenCalledWith('test-id-123')
+    })
+
+    it('calls onEdit with todo id when edit button is clicked', async () => {
+      const user = userEvent.setup()
+      const onEdit = vi.fn()
+      render(<TodoItem {...defaultProps} onEdit={onEdit} />)
+
+      await user.click(screen.getByRole('button', { name: /edit/i }))
+
+      expect(onEdit).toHaveBeenCalledTimes(1)
+      expect(onEdit).toHaveBeenCalledWith('test-id-123')
+    })
+  })
+
+  describe('completion styling', () => {
+    it('applies strikethrough styling when todo is completed', () => {
+      const completedTodo = { ...baseTodo, completed: true }
+      render(<TodoItem {...defaultProps} todo={completedTodo} />)
+
+      const title = screen.getByText('Test todo')
+      expect(title).toHaveClass('line-through')
+    })
+
+    it('does not apply strikethrough when todo is not completed', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      const title = screen.getByText('Test todo')
+      expect(title).not.toHaveClass('line-through')
+    })
+  })
+
+  describe('due date display', () => {
+    it('does not show due date when not set', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      // Should only have the title, no date text
+      expect(screen.queryByText(/today/i)).not.toBeInTheDocument()
+    })
+
+    it('shows "Today" for todos due today', () => {
+      const today = new Date()
+      const todayTodo = { ...baseTodo, dueDate: today.toISOString() }
+      render(<TodoItem {...defaultProps} todo={todayTodo} />)
+
+      expect(screen.getByText('Today')).toBeInTheDocument()
+    })
+
+    it('shows formatted date for future due dates', () => {
+      // Use a date in the future
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 7) // 7 days from now
+      const futureTodo = { ...baseTodo, dueDate: futureDate.toISOString() }
+      render(<TodoItem {...defaultProps} todo={futureTodo} />)
+
+      // Should show month and day (e.g., "Jan 20")
+      const dateText = screen.getByText((content) => {
+        // Check that it's a formatted date (contains a month abbreviation)
+        return /jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/i.test(content)
+      })
+      expect(dateText).toBeInTheDocument()
+    })
+  })
+
+  describe('overdue styling', () => {
+    let realDate
+
+    beforeEach(() => {
+      // Store the real Date constructor
+      realDate = global.Date
+    })
+
+    afterEach(() => {
+      // Restore the real Date constructor
+      global.Date = realDate
+    })
+
+    it('applies overdue styling for past due dates on incomplete todos', () => {
+      // Create a date that's definitely in the past
+      const pastDate = new Date()
+      pastDate.setDate(pastDate.getDate() - 7) // 7 days ago
+      const overdueTodo = { ...baseTodo, dueDate: pastDate.toISOString(), completed: false }
+
+      const { container } = render(<TodoItem {...defaultProps} todo={overdueTodo} />)
+
+      // Check for red border class on the container
+      const todoContainer = container.firstChild
+      expect(todoContainer).toHaveClass('border-red-300')
+      expect(todoContainer).toHaveClass('bg-red-50')
+    })
+
+    it('does not apply overdue styling for completed todos with past due dates', () => {
+      const pastDate = new Date()
+      pastDate.setDate(pastDate.getDate() - 7) // 7 days ago
+      const completedOverdueTodo = { ...baseTodo, dueDate: pastDate.toISOString(), completed: true }
+
+      const { container } = render(<TodoItem {...defaultProps} todo={completedOverdueTodo} />)
+
+      const todoContainer = container.firstChild
+      expect(todoContainer).not.toHaveClass('border-red-300')
+      expect(todoContainer).not.toHaveClass('bg-red-50')
+    })
+
+    it('does not apply overdue styling for todos due today', () => {
+      const today = new Date()
+      const todayTodo = { ...baseTodo, dueDate: today.toISOString() }
+
+      const { container } = render(<TodoItem {...defaultProps} todo={todayTodo} />)
+
+      const todoContainer = container.firstChild
+      expect(todoContainer).not.toHaveClass('border-red-300')
+    })
+
+    it('does not apply overdue styling for future due dates', () => {
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 7) // 7 days from now
+      const futureTodo = { ...baseTodo, dueDate: futureDate.toISOString() }
+
+      const { container } = render(<TodoItem {...defaultProps} todo={futureTodo} />)
+
+      const todoContainer = container.firstChild
+      expect(todoContainer).not.toHaveClass('border-red-300')
+    })
+  })
+
+  describe('accessibility', () => {
+    it('has accessible checkbox label', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(
+        screen.getByLabelText(/mark "test todo" as complete/i)
+      ).toBeInTheDocument()
+    })
+
+    it('has accessible edit button label', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.getByLabelText(/edit "test todo"/i)).toBeInTheDocument()
+    })
+
+    it('has accessible delete button label', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.getByLabelText(/delete "test todo"/i)).toBeInTheDocument()
+    })
+
+    it('checkbox label indicates incomplete for completed todos', () => {
+      const completedTodo = { ...baseTodo, completed: true }
+      render(<TodoItem {...defaultProps} todo={completedTodo} />)
+
+      expect(
+        screen.getByLabelText(/mark "test todo" as incomplete/i)
+      ).toBeInTheDocument()
+    })
+  })
+})
