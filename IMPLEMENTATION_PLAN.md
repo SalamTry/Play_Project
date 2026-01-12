@@ -1,6 +1,6 @@
 # Implementation Plan
 
-> Last updated: Task 4 completed
+> Last updated: Task 5 completed
 
 ## Status: IN PROGRESS
 
@@ -40,7 +40,7 @@
   - "Today" display for today's due dates
   - Write tests in `src/components/TodoItem.test.jsx`
 
-- [ ] **Task 5: Create TodoList component**
+- [x] **Task 5: Create TodoList component**
   - Create `src/components/TodoList.jsx`
   - Render list of TodoItem components
   - Empty state message
@@ -81,6 +81,7 @@
 - **Task 2: Create useTodos custom hook** - Added `src/hooks/useTodos.js` with addTodo, deleteTodo, toggleTodo, updateTodo functions and localStorage integration. Includes 21 tests.
 - **Task 3: Create TodoForm component** - Added `src/components/TodoForm.jsx` with title input, date picker, and form validation. Includes 11 tests.
 - **Task 4: Create TodoItem component** - Added `src/components/TodoItem.jsx` with checkbox, title, due date display, edit/delete buttons, completion and overdue styling. Includes 22 tests.
+- **Task 5: Create TodoList component** - Added `src/components/TodoList.jsx` to render a list of TodoItem components with empty state handling. Includes 15 tests.
 
 ## Notes
 
