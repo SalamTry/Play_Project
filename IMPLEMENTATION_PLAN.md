@@ -1,6 +1,6 @@
 # Implementation Plan
 
-> Last updated: Task 3 completed
+> Last updated: Task 4 completed
 
 ## Status: IN PROGRESS
 
@@ -31,7 +31,7 @@
   - Form validation (no empty todos)
   - Write tests in `src/components/TodoForm.test.jsx`
 
-- [ ] **Task 4: Create TodoItem component**
+- [x] **Task 4: Create TodoItem component**
   - Create `src/components/TodoItem.jsx`
   - Display todo with checkbox, title, due date
   - Edit and delete buttons
@@ -80,6 +80,7 @@
 - **Task 1: Create localStorage utilities** - Added `src/utils/storage.js` with `saveTodos` and `loadTodos` functions, plus comprehensive tests.
 - **Task 2: Create useTodos custom hook** - Added `src/hooks/useTodos.js` with addTodo, deleteTodo, toggleTodo, updateTodo functions and localStorage integration. Includes 21 tests.
 - **Task 3: Create TodoForm component** - Added `src/components/TodoForm.jsx` with title input, date picker, and form validation. Includes 11 tests.
+- **Task 4: Create TodoItem component** - Added `src/components/TodoItem.jsx` with checkbox, title, due date display, edit/delete buttons, completion and overdue styling. Includes 22 tests.
 
 ## Notes
 
