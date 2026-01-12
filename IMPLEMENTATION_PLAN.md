@@ -1,6 +1,6 @@
 # Implementation Plan
 
-> Last updated: Task 2 completed
+> Last updated: Task 3 completed
 
 ## Status: IN PROGRESS
 
@@ -23,7 +23,7 @@
 
 ### Phase 2: Components
 
-- [ ] **Task 3: Create TodoForm component**
+- [x] **Task 3: Create TodoForm component**
   - Create `src/components/TodoForm.jsx`
   - Input for title
   - Date picker for optional due date
@@ -79,6 +79,7 @@
 
 - **Task 1: Create localStorage utilities** - Added `src/utils/storage.js` with `saveTodos` and `loadTodos` functions, plus comprehensive tests.
 - **Task 2: Create useTodos custom hook** - Added `src/hooks/useTodos.js` with addTodo, deleteTodo, toggleTodo, updateTodo functions and localStorage integration. Includes 21 tests.
+- **Task 3: Create TodoForm component** - Added `src/components/TodoForm.jsx` with title input, date picker, and form validation. Includes 11 tests.
 
 ## Notes
 
