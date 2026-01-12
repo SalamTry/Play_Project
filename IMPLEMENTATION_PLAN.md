@@ -1,6 +1,6 @@
 # Implementation Plan
 
-> Last updated: Initial creation
+> Last updated: Task 2 completed
 
 ## Status: IN PROGRESS
 
@@ -8,13 +8,13 @@
 
 ### Phase 1: Foundation
 
-- [ ] **Task 1: Create localStorage utilities**
+- [x] **Task 1: Create localStorage utilities**
   - Create `src/utils/storage.js`
   - Implement `saveTodos(todos)` function
   - Implement `loadTodos()` function with error handling
   - Write tests in `src/utils/storage.test.js`
 
-- [ ] **Task 2: Create useTodos custom hook**
+- [x] **Task 2: Create useTodos custom hook**
   - Create `src/hooks/useTodos.js`
   - State management for todos array
   - Implement addTodo, deleteTodo, toggleTodo, updateTodo
@@ -77,7 +77,8 @@
 
 ## Completed Tasks
 
-(Tasks will be moved here when complete)
+- **Task 1: Create localStorage utilities** - Added `src/utils/storage.js` with `saveTodos` and `loadTodos` functions, plus comprehensive tests.
+- **Task 2: Create useTodos custom hook** - Added `src/hooks/useTodos.js` with addTodo, deleteTodo, toggleTodo, updateTodo functions and localStorage integration. Includes 21 tests.
 
 ## Notes
 
