@@ -1,10 +1,29 @@
 #!/bin/bash
 # Ralph Wiggum Loop Script
-# Usage: ./loop.sh [plan|build] [max_iterations]
+# Usage: ./loop.sh <max_iterations> [plan|build]
 
-MODE="${1:-build}"
-MAX_ITERATIONS="${2:-0}"  # 0 = infinite
+# Check if iteration count is provided
+if [ -z "$1" ]; then
+    echo "Error: iteration count is required"
+    echo ""
+    echo "Usage: ./loop.sh <max_iterations> [plan|build]"
+    echo ""
+    echo "Examples:"
+    echo "  ./loop.sh 5          # Run 5 iterations in build mode"
+    echo "  ./loop.sh 3 plan     # Run 3 iterations in plan mode"
+    echo "  ./loop.sh 10 build   # Run 10 iterations in build mode"
+    exit 1
+fi
+
+MAX_ITERATIONS="$1"
+MODE="${2:-build}"
 ITERATION=0
+
+# Validate iteration count is a number
+if ! [[ "$MAX_ITERATIONS" =~ ^[0-9]+$ ]] || [ "$MAX_ITERATIONS" -eq 0 ]; then
+    echo "Error: iteration count must be a positive number"
+    exit 1
+fi
 
 if [ "$MODE" = "plan" ]; then
     PROMPT_FILE="PROMPT_plan.md"
@@ -15,7 +34,7 @@ else
 fi
 
 echo "Prompt file: $PROMPT_FILE"
-echo "Max iterations: $MAX_ITERATIONS (0 = infinite)"
+echo "Max iterations: $MAX_ITERATIONS"
 echo "---"
 
 while true; do
@@ -41,7 +60,7 @@ while true; do
     fi
 
     # Check iteration limit
-    if [ "$MAX_ITERATIONS" -gt 0 ] && [ "$ITERATION" -ge "$MAX_ITERATIONS" ]; then
+    if [ "$ITERATION" -ge "$MAX_ITERATIONS" ]; then
         echo ""
         echo "✅ Reached max iterations ($MAX_ITERATIONS). Stopping."
         break
