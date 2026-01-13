@@ -8,9 +8,9 @@
 | Metric | Count |
 |--------|-------|
 | Total Tasks | 17 |
-| Completed | 14 |
+| Completed | 15 |
 | Blocked | 0 |
-| Remaining | 3 |
+| Remaining | 2 |
 
 ---
 
@@ -108,7 +108,7 @@
   - Depends: TASK-013
   - **MUST:** Wrap todo items with AnimatedList. Items should fade in on add, fade out on delete, and animate position changes.
 
-- [ ] **TASK-015:** Add micro-interactions (hover, focus, buttons)
+- [x] **TASK-015:** Add micro-interactions (hover, focus, buttons)
   - Files: all components
   - Tests: visual inspection
   - Depends: TASK-013
