@@ -15,4 +15,15 @@
   --color-primary-700: oklch(0.43 0.17 255);
   --color-primary-800: oklch(0.37 0.14 255);
   --color-primary-900: oklch(0.31 0.11 255);
+
+  --animate-slide-down: slide-down 0.3s ease-out;
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
