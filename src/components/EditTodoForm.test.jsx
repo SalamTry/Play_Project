@@ -8,6 +8,7 @@ const mockTodo = {
   title: 'Test todo',
   completed: false,
   dueDate: '2024-12-31T00:00:00.000Z',
+  priority: 'high',
 }
 
 const mockTodoWithoutDate = {
@@ -15,6 +16,15 @@ const mockTodoWithoutDate = {
   title: 'Test todo no date',
   completed: false,
   dueDate: null,
+  priority: null,
+}
+
+const mockTodoMediumPriority = {
+  id: 'test-id-3',
+  title: 'Test todo medium',
+  completed: false,
+  dueDate: null,
+  priority: 'medium',
 }
 
 describe('EditTodoForm', () => {
@@ -36,6 +46,35 @@ describe('EditTodoForm', () => {
 
       const dateInput = screen.getByLabelText(/due date/i)
       expect(dateInput).toHaveValue('')
+    })
+
+    it('renders with the priority pre-filled when present', () => {
+      render(<EditTodoForm todo={mockTodo} onSave={() => {}} onCancel={() => {}} />)
+
+      const prioritySelect = screen.getByLabelText(/priority/i)
+      expect(prioritySelect).toHaveValue('high')
+    })
+
+    it('renders with empty priority when todo has no priority', () => {
+      render(<EditTodoForm todo={mockTodoWithoutDate} onSave={() => {}} onCancel={() => {}} />)
+
+      const prioritySelect = screen.getByLabelText(/priority/i)
+      expect(prioritySelect).toHaveValue('')
+    })
+
+    it('renders priority dropdown with all options', () => {
+      render(<EditTodoForm todo={mockTodo} onSave={() => {}} onCancel={() => {}} />)
+
+      const prioritySelect = screen.getByLabelText(/priority/i)
+      expect(prioritySelect).toBeInTheDocument()
+
+      const options = prioritySelect.querySelectorAll('option')
+      expect(options).toHaveLength(4)
+      expect(options[0]).toHaveValue('')
+      expect(options[0]).toHaveTextContent('None')
+      expect(options[1]).toHaveValue('high')
+      expect(options[2]).toHaveValue('medium')
+      expect(options[3]).toHaveValue('low')
     })
 
     it('renders save and cancel buttons', () => {
@@ -91,6 +130,41 @@ describe('EditTodoForm', () => {
 
       expect(onSave).toHaveBeenCalledTimes(1)
       expect(onSave.mock.calls[0][1].dueDate).toBeNull()
+    })
+
+    it('calls onSave with updated priority', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<EditTodoForm todo={mockTodo} onSave={onSave} onCancel={() => {}} />)
+
+      await user.selectOptions(screen.getByLabelText(/priority/i), 'medium')
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onSave.mock.calls[0][1].priority).toBe('medium')
+    })
+
+    it('calls onSave with null priority when priority is cleared', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<EditTodoForm todo={mockTodo} onSave={onSave} onCancel={() => {}} />)
+
+      await user.selectOptions(screen.getByLabelText(/priority/i), '')
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onSave.mock.calls[0][1].priority).toBeNull()
+    })
+
+    it('calls onSave with existing priority when unchanged', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<EditTodoForm todo={mockTodoMediumPriority} onSave={onSave} onCancel={() => {}} />)
+
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onSave.mock.calls[0][1].priority).toBe('medium')
     })
 
     it('saves when pressing Enter in title field', async () => {
@@ -188,6 +262,7 @@ describe('EditTodoForm', () => {
       // Screen reader only labels should exist
       expect(screen.getByLabelText(/task title/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/due date/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/priority/i)).toBeInTheDocument()
     })
 
     it('uses unique IDs based on todo ID', () => {
@@ -195,9 +270,11 @@ describe('EditTodoForm', () => {
 
       const titleInput = screen.getByLabelText(/task title/i)
       const dateInput = screen.getByLabelText(/due date/i)
+      const prioritySelect = screen.getByLabelText(/priority/i)
 
       expect(titleInput.id).toContain('test-id-1')
       expect(dateInput.id).toContain('test-id-1')
+      expect(prioritySelect.id).toContain('test-id-1')
     })
   })
 })

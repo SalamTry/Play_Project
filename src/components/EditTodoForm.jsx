@@ -19,12 +19,14 @@ function toDateInputValue(isoString) {
  * @param {string} props.todo.title - Todo title
  * @param {boolean} props.todo.completed - Whether todo is completed
  * @param {string|null} props.todo.dueDate - Optional due date as ISO string
+ * @param {'high'|'medium'|'low'|null} props.todo.priority - Optional priority level
  * @param {Function} props.onSave - Callback when save is clicked (id, updates)
  * @param {Function} props.onCancel - Callback when cancel is clicked
  */
 export function EditTodoForm({ todo, onSave, onCancel }) {
   const [title, setTitle] = useState(todo.title)
   const [dueDate, setDueDate] = useState(toDateInputValue(todo.dueDate))
+  const [priority, setPriority] = useState(todo.priority || '')
   const titleInputRef = useRef(null)
 
   // Focus the title input on mount
@@ -42,10 +44,13 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
 
     // Convert date input value to ISO string or null
     const dueDateValue = dueDate ? new Date(dueDate).toISOString() : null
+    // Convert priority to null if empty string
+    const priorityValue = priority || null
 
     onSave(todo.id, {
       title: trimmedTitle,
       dueDate: dueDateValue,
+      priority: priorityValue,
     })
   }
 
@@ -89,6 +94,23 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
             onChange={(e) => setDueDate(e.target.value)}
             className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
           />
+        </div>
+
+        <div className="sm:w-32">
+          <label htmlFor={`edit-priority-${todo.id}`} className="sr-only">
+            Priority
+          </label>
+          <select
+            id={`edit-priority-${todo.id}`}
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white"
+          >
+            <option value="">None</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
         </div>
       </div>
 
