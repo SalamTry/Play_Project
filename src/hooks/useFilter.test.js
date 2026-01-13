@@ -28,6 +28,12 @@ describe('useFilter', () => {
 
       expect(result.current.priorityFilter).toBe('all')
     })
+
+    it('initializes with selectedTags as empty array', () => {
+      const { result } = renderHook(() => useFilter())
+
+      expect(result.current.selectedTags).toEqual([])
+    })
   })
 
   describe('setFilter', () => {
@@ -109,6 +115,46 @@ describe('useFilter', () => {
       })
 
       expect(result.current.priorityFilter).toBe('all')
+    })
+  })
+
+  describe('setSelectedTags', () => {
+    it('updates selectedTags with tag IDs', () => {
+      const { result } = renderHook(() => useFilter())
+
+      act(() => {
+        result.current.setSelectedTags(['tag-1', 'tag-2'])
+      })
+
+      expect(result.current.selectedTags).toEqual(['tag-1', 'tag-2'])
+    })
+
+    it('clears selectedTags with empty array', () => {
+      const { result } = renderHook(() => useFilter())
+
+      act(() => {
+        result.current.setSelectedTags(['tag-1'])
+      })
+
+      act(() => {
+        result.current.setSelectedTags([])
+      })
+
+      expect(result.current.selectedTags).toEqual([])
+    })
+
+    it('replaces previous selection', () => {
+      const { result } = renderHook(() => useFilter())
+
+      act(() => {
+        result.current.setSelectedTags(['tag-1', 'tag-2'])
+      })
+
+      act(() => {
+        result.current.setSelectedTags(['tag-3'])
+      })
+
+      expect(result.current.selectedTags).toEqual(['tag-3'])
     })
   })
 
@@ -366,6 +412,179 @@ describe('useFilter', () => {
         const filtered = result.current.filterTodos(mockTodos)
 
         expect(filtered).toHaveLength(0)
+      })
+    })
+
+    describe('filter by tags', () => {
+      const mockTodosWithTags = [
+        {
+          id: '1',
+          title: 'Buy groceries',
+          completed: false,
+          priority: null,
+          tags: [
+            { id: 'tag-1', name: 'Shopping', color: '#ff0000' },
+            { id: 'tag-2', name: 'Personal', color: '#00ff00' },
+          ],
+        },
+        {
+          id: '2',
+          title: 'Finish report',
+          completed: true,
+          priority: 'high',
+          tags: [{ id: 'tag-3', name: 'Work', color: '#0000ff' }],
+        },
+        {
+          id: '3',
+          title: 'Call dentist',
+          completed: false,
+          priority: 'medium',
+          tags: [{ id: 'tag-2', name: 'Personal', color: '#00ff00' }],
+        },
+        {
+          id: '4',
+          title: 'Pay bills',
+          completed: true,
+          priority: 'low',
+          tags: [],
+        },
+        {
+          id: '5',
+          title: 'Clean room',
+          completed: false,
+          priority: null,
+        },
+      ]
+
+      it('returns all todos when selectedTags is empty', () => {
+        const { result } = renderHook(() => useFilter())
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(5)
+      })
+
+      it('filters todos by single selected tag', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setSelectedTags(['tag-1'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(1)
+        expect(filtered[0].title).toBe('Buy groceries')
+      })
+
+      it('filters todos matching ANY selected tag (multi-select)', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setSelectedTags(['tag-1', 'tag-3'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(2)
+        expect(filtered.map((t) => t.id)).toEqual(['1', '2'])
+      })
+
+      it('returns multiple todos when they share the same tag', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setSelectedTags(['tag-2'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(2)
+        expect(filtered.map((t) => t.title)).toEqual([
+          'Buy groceries',
+          'Call dentist',
+        ])
+      })
+
+      it('returns empty array when no todos have selected tags', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setSelectedTags(['nonexistent-tag'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(0)
+      })
+
+      it('excludes todos without tags when tag filter is active', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setSelectedTags(['tag-2'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered.find((t) => t.id === '4')).toBeUndefined()
+        expect(filtered.find((t) => t.id === '5')).toBeUndefined()
+      })
+
+      it('handles todos with undefined tags gracefully', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setSelectedTags(['tag-2'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(2)
+      })
+
+      it('combines tag filter with status filter', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setFilter('active')
+          result.current.setSelectedTags(['tag-2'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(2)
+        expect(filtered.every((t) => !t.completed)).toBe(true)
+      })
+
+      it('combines tag filter with search query', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setSearchQuery('dentist')
+          result.current.setSelectedTags(['tag-2'])
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(1)
+        expect(filtered[0].title).toBe('Call dentist')
+      })
+
+      it('combines tag, status, priority, and search filters', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setFilter('active')
+          result.current.setPriorityFilter('medium')
+          result.current.setSelectedTags(['tag-2'])
+          result.current.setSearchQuery('call')
+        })
+
+        const filtered = result.current.filterTodos(mockTodosWithTags)
+
+        expect(filtered).toHaveLength(1)
+        expect(filtered[0].title).toBe('Call dentist')
       })
     })
 

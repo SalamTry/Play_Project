@@ -8,6 +8,7 @@ export function useFilter() {
   const [filter, setFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [priorityFilter, setPriorityFilter] = useState('all')
+  const [selectedTags, setSelectedTags] = useState([])
 
   /**
    * Filter todos by status, priority, and search query
@@ -38,9 +39,17 @@ export function useFilter() {
         )
       }
 
+      // Filter by selected tags (show todos matching ANY selected tag)
+      if (selectedTags.length > 0) {
+        result = result.filter((todo) => {
+          const todoTagIds = (todo.tags || []).map((tag) => tag.id)
+          return selectedTags.some((tagId) => todoTagIds.includes(tagId))
+        })
+      }
+
       return result
     },
-    [filter, searchQuery, priorityFilter]
+    [filter, searchQuery, priorityFilter, selectedTags]
   )
 
   return {
@@ -50,6 +59,8 @@ export function useFilter() {
     setSearchQuery,
     priorityFilter,
     setPriorityFilter,
+    selectedTags,
+    setSelectedTags,
     filterTodos,
   }
 }
