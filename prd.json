@@ -268,7 +268,7 @@
       ],
       "files": ["src/components/SelectionToolbar.jsx"],
       "tests": ["src/components/SelectionToolbar.test.jsx"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-020",
@@ -282,7 +282,7 @@
       ],
       "files": ["src/hooks/useTodos.js"],
       "tests": ["src/hooks/useTodos.test.js"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-021",
@@ -296,7 +296,7 @@
       ],
       "files": ["src/hooks/useSorting.js"],
       "tests": ["src/hooks/useSorting.test.js"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-022",
