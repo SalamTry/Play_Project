@@ -103,6 +103,47 @@ describe('useTodos', () => {
       expect(result.current.todos[0].title).toBe('Trimmed title')
     })
 
+    it('adds a todo with tags', () => {
+      const { result } = renderHook(() => useTodos())
+      const tags = [
+        { id: 'tag-1', name: 'Work', color: '#ff0000' },
+        { id: 'tag-2', name: 'Urgent', color: '#00ff00' },
+      ]
+
+      act(() => {
+        result.current.addTodo('Todo with tags', null, null, tags)
+      })
+
+      expect(result.current.todos[0].tags).toEqual(tags)
+    })
+
+    it('defaults tags to empty array when not provided', () => {
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addTodo('Todo without tags')
+      })
+
+      expect(result.current.todos[0].tags).toEqual([])
+    })
+
+    it('adds a todo with all fields including tags', () => {
+      const { result } = renderHook(() => useTodos())
+      const dueDate = '2024-12-31T00:00:00.000Z'
+      const tags = [{ id: 'tag-1', name: 'Personal', color: '#0000ff' }]
+
+      act(() => {
+        result.current.addTodo('Full todo with tags', dueDate, 'high', tags)
+      })
+
+      expect(result.current.todos[0]).toMatchObject({
+        title: 'Full todo with tags',
+        dueDate,
+        priority: 'high',
+        tags,
+      })
+    })
+
     it('returns the created todo', () => {
       const { result } = renderHook(() => useTodos())
       let createdTodo
@@ -341,6 +382,95 @@ describe('useTodos', () => {
         priority: 'high',
         createdAt: '2024-01-01',
       })
+    })
+
+    it('updates the tags of a todo', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, tags: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const newTags = [
+        { id: 'tag-1', name: 'Work', color: '#ff0000' },
+        { id: 'tag-2', name: 'Urgent', color: '#00ff00' },
+      ]
+
+      act(() => {
+        result.current.updateTodo('1', { tags: newTags })
+      })
+
+      expect(result.current.todos[0].tags).toEqual(newTags)
+    })
+
+    it('replaces existing tags', () => {
+      const oldTags = [{ id: 'tag-1', name: 'Old', color: '#000000' }]
+      const newTags = [{ id: 'tag-2', name: 'New', color: '#ffffff' }]
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, tags: oldTags },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', { tags: newTags })
+      })
+
+      expect(result.current.todos[0].tags).toEqual(newTags)
+    })
+
+    it('clears tags when set to empty array', () => {
+      const tags = [{ id: 'tag-1', name: 'Work', color: '#ff0000' }]
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, tags },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', { tags: [] })
+      })
+
+      expect(result.current.todos[0].tags).toEqual([])
+    })
+
+    it('updates title, due date, priority, and tags together', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Old', completed: false, dueDate: null, priority: null, tags: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const tags = [{ id: 'tag-1', name: 'Important', color: '#ff0000' }]
+
+      act(() => {
+        result.current.updateTodo('1', {
+          title: 'New',
+          dueDate: '2024-12-31T00:00:00.000Z',
+          priority: 'high',
+          tags,
+        })
+      })
+
+      expect(result.current.todos[0]).toMatchObject({
+        title: 'New',
+        dueDate: '2024-12-31T00:00:00.000Z',
+        priority: 'high',
+        tags,
+      })
+    })
+
+    it('preserves tags when updating other fields', () => {
+      const tags = [{ id: 'tag-1', name: 'Work', color: '#ff0000' }]
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, tags },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', { title: 'Updated' })
+      })
+
+      expect(result.current.todos[0].tags).toEqual(tags)
     })
   })
 
