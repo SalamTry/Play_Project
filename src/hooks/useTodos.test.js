@@ -158,6 +158,21 @@ describe('useTodos', () => {
       })
       expect(createdTodo.id).toBeDefined()
     })
+
+    it('returns the created todo with order field', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 5 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      let createdTodo
+
+      act(() => {
+        createdTodo = result.current.addTodo('New todo')
+      })
+
+      expect(createdTodo.order).toBe(6)
+    })
   })
 
   describe('deleteTodo', () => {
@@ -813,6 +828,190 @@ describe('useTodos', () => {
       })
 
       expect(result.current.todos[0].subtasks).toEqual(subtasks)
+    })
+  })
+
+  describe('order field', () => {
+    it('new todo gets order = 1 when no existing todos', () => {
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addTodo('First todo')
+      })
+
+      expect(result.current.todos[0].order).toBe(1)
+    })
+
+    it('new todo gets order = max + 1 when todos exist', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addTodo('New todo')
+      })
+
+      expect(result.current.todos[2].order).toBe(3)
+    })
+
+    it('handles legacy todos without order field', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Legacy todo', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addTodo('New todo')
+      })
+
+      expect(result.current.todos[1].order).toBe(1)
+    })
+
+    it('new todo order handles non-sequential existing orders', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 5 },
+        { id: '2', title: 'Todo 2', completed: false, order: 10 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addTodo('New todo')
+      })
+
+      expect(result.current.todos[2].order).toBe(11)
+    })
+  })
+
+  describe('reorderTodos', () => {
+    it('moves todo from first to last position', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+        { id: '3', title: 'Todo 3', completed: false, order: 3 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.reorderTodos('1', '3')
+      })
+
+      expect(result.current.todos[0].id).toBe('2')
+      expect(result.current.todos[1].id).toBe('3')
+      expect(result.current.todos[2].id).toBe('1')
+      expect(result.current.todos[0].order).toBe(1)
+      expect(result.current.todos[1].order).toBe(2)
+      expect(result.current.todos[2].order).toBe(3)
+    })
+
+    it('moves todo from last to first position', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+        { id: '3', title: 'Todo 3', completed: false, order: 3 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.reorderTodos('3', '1')
+      })
+
+      expect(result.current.todos[0].id).toBe('3')
+      expect(result.current.todos[1].id).toBe('1')
+      expect(result.current.todos[2].id).toBe('2')
+      expect(result.current.todos[0].order).toBe(1)
+      expect(result.current.todos[1].order).toBe(2)
+      expect(result.current.todos[2].order).toBe(3)
+    })
+
+    it('moves todo to middle position', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+        { id: '3', title: 'Todo 3', completed: false, order: 3 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.reorderTodos('1', '2')
+      })
+
+      expect(result.current.todos[0].id).toBe('2')
+      expect(result.current.todos[1].id).toBe('1')
+      expect(result.current.todos[2].id).toBe('3')
+    })
+
+    it('does nothing when activeId not found', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.reorderTodos('nonexistent', '2')
+      })
+
+      expect(result.current.todos[0].id).toBe('1')
+      expect(result.current.todos[1].id).toBe('2')
+    })
+
+    it('does nothing when overId not found', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.reorderTodos('1', 'nonexistent')
+      })
+
+      expect(result.current.todos[0].id).toBe('1')
+      expect(result.current.todos[1].id).toBe('2')
+    })
+
+    it('does nothing when activeId equals overId', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.reorderTodos('1', '1')
+      })
+
+      expect(result.current.todos[0].id).toBe('1')
+      expect(result.current.todos[1].id).toBe('2')
+    })
+
+    it('persists order changes to storage', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, order: 1 },
+        { id: '2', title: 'Todo 2', completed: false, order: 2 },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      saveTodos.mockClear()
+
+      act(() => {
+        result.current.reorderTodos('2', '1')
+      })
+
+      expect(saveTodos).toHaveBeenCalled()
+      expect(saveTodos.mock.calls[0][0][0].id).toBe('2')
+      expect(saveTodos.mock.calls[0][0][0].order).toBe(1)
     })
   })
 

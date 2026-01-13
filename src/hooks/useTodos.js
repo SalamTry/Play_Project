@@ -23,17 +23,22 @@ export function useTodos() {
    * @returns {Object} The created todo
    */
   function addTodo(title, dueDate = null, priority = null, tags = [], subtasks = []) {
-    const newTodo = {
-      id: crypto.randomUUID(),
-      title: title.trim(),
-      completed: false,
-      dueDate,
-      priority,
-      tags: tags || [],
-      subtasks: subtasks || [],
-      createdAt: new Date().toISOString(),
-    }
-    setTodos((prev) => [...prev, newTodo])
+    let newTodo
+    setTodos((prev) => {
+      const maxOrder = prev.reduce((max, todo) => Math.max(max, todo.order ?? 0), 0)
+      newTodo = {
+        id: crypto.randomUUID(),
+        title: title.trim(),
+        completed: false,
+        dueDate,
+        priority,
+        tags: tags || [],
+        subtasks: subtasks || [],
+        createdAt: new Date().toISOString(),
+        order: maxOrder + 1,
+      }
+      return [...prev, newTodo]
+    })
     return newTodo
   }
 
@@ -154,6 +159,33 @@ export function useTodos() {
     )
   }
 
+  /**
+   * Reorder todos by updating their order values
+   * @param {string} activeId - The ID of the todo being moved
+   * @param {string} overId - The ID of the todo it's being dropped on
+   */
+  function reorderTodos(activeId, overId) {
+    setTodos((prev) => {
+      const oldIndex = prev.findIndex((t) => t.id === activeId)
+      const newIndex = prev.findIndex((t) => t.id === overId)
+
+      if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
+        return prev
+      }
+
+      // Create a new array with the item moved
+      const result = [...prev]
+      const [removed] = result.splice(oldIndex, 1)
+      result.splice(newIndex, 0, removed)
+
+      // Update order values based on new positions
+      return result.map((todo, index) => ({
+        ...todo,
+        order: index + 1,
+      }))
+    })
+  }
+
   return {
     todos,
     addTodo,
@@ -163,5 +195,6 @@ export function useTodos() {
     addSubtask,
     updateSubtask,
     deleteSubtask,
+    reorderTodos,
   }
 }
