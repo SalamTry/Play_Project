@@ -310,7 +310,7 @@
       ],
       "files": ["src/components/SortDropdown.jsx"],
       "tests": ["src/components/SortDropdown.test.jsx"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-023",
@@ -324,7 +324,7 @@
       ],
       "files": ["src/App.jsx"],
       "tests": [],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-024",
@@ -338,7 +338,7 @@
       ],
       "files": [],
       "tests": [],
-      "passes": false
+      "passes": true
     }
   ]
 }

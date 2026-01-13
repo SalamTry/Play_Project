@@ -2,7 +2,7 @@
 
 Started: 2026-01-13
 
-## Stories: 11/24 complete
+## Stories: 24/24 complete
 
 ---
 
@@ -119,3 +119,231 @@ SESSION: 2026-01-13 06:19 | MODE: build
 [06:22] Review: Passed (2 cycles)
 [06:22] Visual: Passed
 [06:22] Learned: TodoForm can directly forward ref to input; SearchBar uses useImperativeHandle to expose focus() method due to internal inputRef; selection state managed at App level with click handlers that exclude interactive elements
+[06:23] STORY_COMPLETE: US-011
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:24 | MODE: build
+═══════════════════════════════════════
+[06:24] US-012: Started
+[06:24] US-012: Created KeyboardShortcutsHelp modal component
+[06:24] US-012: Integrated modal in App.jsx with ? shortcut
+[06:25] US-012: Validation passed (365 tests, build success)
+[06:25] US-012: Review cycle 1 - found 1 issue (redundant '?' shortcut), fixing
+[06:25] US-012: Review cycle 2 - clean
+[06:25] US-012: Visual check passed
+[06:26] US-012: COMPLETE
+[06:26] Review: Passed (2 cycles)
+[06:26] Visual: Passed
+[06:26] Learned: '?' key generates 'shift+?' because shift is required to type ?; focus trap uses querySelectorAll for focusable elements; previousActiveElement pattern for returning focus on close
+[06:26] STORY_COMPLETE: US-012
+[06:26] STORY_COMPLETE: US-012
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:28 | MODE: build
+═══════════════════════════════════════
+[06:28] US-013: Started
+[06:28] US-013: Installed @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities
+[06:28] US-013: Configured DndContext in App.jsx with PointerSensor and KeyboardSensor
+[06:28] US-013: Validation passed (365 tests, build success)
+[06:29] US-013: Review cycle 1 - clean
+[06:29] US-013: Visual check passed
+[06:29] US-013: COMPLETE
+[06:29] Review: Passed (1 cycle)
+[06:29] Visual: Passed
+[06:29] Learned: dnd-kit uses useSensors/useSensor hooks for sensor configuration; PointerSensor distance constraint prevents accidental drags; sortableKeyboardCoordinates from @dnd-kit/sortable enables keyboard navigation for sortable lists
+[06:30] STORY_COMPLETE: US-013
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:30 | MODE: build
+═══════════════════════════════════════
+[06:30] US-014: Started
+[06:31] US-014: Added order field to todo model with max + 1 logic
+[06:31] US-014: Added reorderTodos function for drag-and-drop support
+[06:31] US-014: Added 12 comprehensive tests (order field + reorderTodos)
+[06:32] US-014: Validation passed (377 tests, build success)
+[06:32] US-014: Review cycle 1 - clean
+[06:32] US-014: Visual check passed
+[06:32] US-014: COMPLETE
+[06:32] Review: Passed (1 cycle)
+[06:32] Visual: Passed
+[06:32] Learned: Computing maxOrder inside setTodos callback ensures correct order even with concurrent updates; nullish coalescing (?? 0) handles legacy todos gracefully
+[06:33] STORY_COMPLETE: US-014
+[06:33] STORY_COMPLETE: US-014
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:34 | MODE: build
+═══════════════════════════════════════
+[06:34] US-015: Started
+[06:34] US-015: Created DraggableTodoItem wrapper component
+[06:35] US-015: Uses useSortable hook with transform/transition
+[06:35] US-015: Drag handle with grip icon, visible on hover
+[06:35] US-015: Drop placeholder with dashed border indicator
+[06:35] US-015: Added 23 comprehensive tests
+[06:35] US-015: Validation passed (400 tests, build success)
+[06:35] US-015: Review cycle 1 - found 1 issue (drag handle positioned outside), fixing
+[06:36] US-015: Review cycle 2 - clean
+[06:36] US-015: Visual check passed
+[06:36] US-015: COMPLETE
+[06:36] Review: Passed (2 cycles)
+[06:36] Visual: Passed
+[06:36] Learned: Inline drag handle (flex layout) is better than absolute positioning outside container; useSortable provides attributes/listeners for the handle button; pointer-events-none on placeholder prevents interference with clicks
+[06:37] STORY_COMPLETE: US-015
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:38 | MODE: build
+═══════════════════════════════════════
+[06:38] US-016: Started
+[06:38] US-016: Updated TodoList with SortableContext and DraggableTodoItem
+[06:39] US-016: Connected handleDragEnd to reorderTodos in App.jsx
+[06:39] US-016: Added 11 new tests for drag-and-drop functionality
+[06:39] US-016: Validation passed (411 tests, build success)
+[06:40] US-016: Review cycle 1 - clean
+[06:40] US-016: Visual check passed
+[06:40] US-016: COMPLETE
+[06:40] Review: Passed (1 cycle)
+[06:40] Visual: Passed
+[06:40] Learned: SortableContext with verticalListSortingStrategy enables smooth drag-and-drop; TodoList now handles both drag-and-drop mode (DraggableTodoItem) and regular mode (TodoItem); filteredTodos work seamlessly with reorder
+[06:41] STORY_COMPLETE: US-016
+[06:41] STORY_COMPLETE: US-016
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:42 | MODE: build
+═══════════════════════════════════════
+[06:42] US-017: Started
+[06:42] US-017: Created useSelection hook with Set-based state
+[06:42] US-017: Implemented toggleSelection, selectAll, clearSelection, isSelected
+[06:42] US-017: Added selectionCount getter with useMemo
+[06:43] US-017: Added 25 comprehensive tests
+[06:43] US-017: Validation passed (436 tests, build success)
+[06:43] US-017: Review cycle 1 - clean
+[06:43] US-017: Visual check passed
+[06:43] US-017: COMPLETE
+[06:43] Review: Passed (1 cycle)
+[06:43] Visual: Passed
+[06:43] Learned: Set-based state for selection is more efficient than array; useCallback with functional setState pattern (prev => new Set(prev)) ensures stable references; isSelected depends on selectedIds for correct updates
+[06:44] STORY_COMPLETE: US-017
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:45 | MODE: build
+═══════════════════════════════════════
+[06:45] US-018: Started
+[06:46] US-018: Added dedicated selection checkbox to TodoItem (left of completion checkbox)
+[06:46] US-018: Selection checkbox toggles isSelected via onSelect callback
+[06:46] US-018: Added highlight background (bg-indigo-50/50) with border/ring for selected items
+[06:46] US-018: Differentiated checkboxes: selection (square), completion (circular)
+[06:47] US-018: Added 9 new tests for selection functionality
+[06:47] US-018: Updated 4 existing tests for two-checkbox layout
+[06:47] US-018: Validation passed (446 tests, build success)
+[06:47] US-018: Review cycle 1 - clean
+[06:47] US-018: Visual check passed
+[06:47] US-018: COMPLETE
+[06:47] Review: Passed (1 cycle)
+[06:47] Visual: Passed
+[06:47] Learned: Separate selection/completion checkboxes require updating tests that use getByRole('checkbox'); use specific aria-labels to target individual checkboxes; rounded-full class differentiates completion checkbox visually
+[06:48] STORY_COMPLETE: US-018
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:50 | MODE: build
+═══════════════════════════════════════
+[06:50] US-019: Started
+[06:50] US-019: Created SelectionToolbar component with slide-down animation
+[06:50] US-019: Added Complete All, Delete All, Clear Selection buttons
+[06:50] US-019: Selection count with singular/plural text
+[06:50] US-019: Added custom slide-down animation to index.css
+[06:51] US-019: Added 16 comprehensive tests
+[06:51] US-019: Validation passed (462 tests, build success)
+[06:51] US-019: Review cycle 1 - clean
+[06:52] US-019: Visual check passed
+[06:52] US-019: COMPLETE
+[06:52] Review: Passed (1 cycle)
+[06:52] Visual: Passed
+[06:52] Learned: Custom CSS animation using @theme variables in Tailwind v4; toolbar role with aria-label for bulk actions; aria-live polite for dynamic selection count announcements
+[06:52] STORY_COMPLETE: US-019
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:54 | MODE: build
+═══════════════════════════════════════
+[06:54] US-020: Started
+[06:54] US-020: Implemented bulkComplete, bulkDelete, bulkSetPriority, bulkAddTag functions
+[06:54] US-020: Added 26 comprehensive tests for bulk operations
+[06:54] US-020: Validation passed (485 tests, build success)
+[06:55] US-020: Review cycle 1 - clean
+[06:55] US-020: Visual check passed
+[06:55] US-020: COMPLETE
+[06:55] Review: Passed (1 cycle)
+[06:55] Visual: Passed
+[06:55] Learned: Set-based lookups (O(1)) for bulk operations; duplicate tag prevention with .some(); handling legacy todos without tags array using (todo.tags || [])
+[06:55] STORY_COMPLETE: US-020
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:57 | MODE: build
+═══════════════════════════════════════
+[06:57] US-021: Started
+[06:57] US-021: Created useSorting hook with sortBy and sortDirection state
+[06:57] US-021: Implemented sortTodos function with custom, date, priority, alpha modes
+[06:57] US-021: Added localStorage persistence for sorting preferences
+[06:58] US-021: Added 40 comprehensive tests
+[06:58] US-021: Validation passed (525 tests, build success)
+[06:58] US-021: Review cycle 1 - found 1 issue (double localStorage read), fixing
+[06:58] US-021: Review cycle 2 - clean
+[06:59] US-021: Visual check passed
+[06:59] US-021: COMPLETE
+[06:59] Review: Passed (2 cycles)
+[06:59] Visual: Passed
+[06:59] Learned: Combined state with destructuring ({ sortBy, sortDirection }) avoids multiple localStorage reads; functional setState pattern (prev => ({ ...prev, sortBy: value })) works well with combined state; localeCompare for case-insensitive alphabetical sort
+[06:59] STORY_COMPLETE: US-021
+[06:59] STORY_COMPLETE: US-021
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 07:01 | MODE: build
+═══════════════════════════════════════
+[07:01] US-022: Started
+[07:02] US-022: Created SortDropdown component with dropdown menu, direction toggle, icons
+[07:03] US-022: Added 27 comprehensive tests
+[07:04] US-022: Validation passed (552 tests, build success)
+[07:04] US-022: Review cycle 1 - found 1 issue (unused id attribute on label), fixing
+[07:04] US-022: Review cycle 2 - clean
+[07:04] US-022: Visual check passed
+[07:05] US-022: COMPLETE
+[07:05] Review: Passed (2 cycles)
+[07:05] Visual: Passed
+[07:05] Learned: aria-label on buttons takes precedence over aria-labelledby; click+Escape focuses button for keyboard testing; inline SVG icons with aria-hidden="true" for sort options
+[07:06] STORY_COMPLETE: US-022
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 07:07 | MODE: build
+═══════════════════════════════════════
+[07:07] US-023: Started
+[07:07] US-023: Connected useSorting hook and SortDropdown to App.jsx
+[07:07] US-023: Applied sorting after filtering: sortTodos(filterTodos(todos))
+[07:07] US-023: Disabled drag-and-drop when sortBy !== 'custom'
+[07:08] US-023: Validation passed (552 tests, build success)
+[07:08] US-023: Review cycle 1 - clean
+[07:08] US-023: Visual check passed
+[07:08] US-023: COMPLETE
+[07:08] Review: Passed (1 cycle)
+[07:08] Visual: Passed
+[07:08] Learned: Sorting and filtering compose well with sortTodos(filterTodos(todos)); enableDragDrop={sortBy === 'custom'} disables reordering when using non-custom sort
+[07:08] STORY_COMPLETE: US-023
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 07:09 | MODE: build
+═══════════════════════════════════════
+[07:09] US-024: Started
+[07:09] US-024: Running tests (npm run test:run)
+[07:09] US-024: All 552 tests pass with 0 failures
+[07:09] US-024: Running build (npm run build)
+[07:09] US-024: Build succeeded without errors
+[07:09] US-024: Verifying feature integration
+[07:10] US-024: Tags - useTodos supports tags, TagInput component, display on TodoItem with overflow tooltip
+[07:10] US-024: Subtasks - useTodos supports subtasks, SubtaskList component, progress indicator, expand/collapse
+[07:10] US-024: Drag-and-drop - DndContext configured, DraggableTodoItem, reorderTodos, disabled when non-custom sort
+[07:10] US-024: Bulk actions - bulkComplete, bulkDelete, bulkSetPriority, bulkAddTag all implemented
+[07:10] US-024: Keyboard shortcuts - Ctrl/Cmd+N/F/1/2/3, Escape, Delete, ? all working
+[07:10] US-024: Visual check passed
+[07:10] US-024: Code review cycle 1 - clean
+[07:10] US-024: COMPLETE
+[07:10] Review: Passed (1 cycle)
+[07:10] Visual: Passed
+[07:10] Learned: Final integration story validates all features work together; comprehensive tests (552) provide confidence; visual check confirms UI correctness
+[07:10] STORY_COMPLETE: US-024
