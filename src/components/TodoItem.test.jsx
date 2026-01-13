@@ -151,12 +151,12 @@ describe('TodoItem', () => {
 
     beforeEach(() => {
       // Store the real Date constructor
-      realDate = global.Date
+      realDate = globalThis.Date
     })
 
     afterEach(() => {
       // Restore the real Date constructor
-      global.Date = realDate
+      globalThis.Date = realDate
     })
 
     it('applies overdue styling for past due dates on incomplete todos', () => {
