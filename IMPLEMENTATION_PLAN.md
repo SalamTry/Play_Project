@@ -1,6 +1,6 @@
 # Implementation Plan
 
-> Last updated: Task 6 completed
+> Last updated: Task 7 completed
 
 ## Status: IN PROGRESS
 
@@ -55,7 +55,7 @@
 
 ### Phase 3: Integration
 
-- [ ] **Task 7: Integrate components in App.jsx**
+- [x] **Task 7: Integrate components in App.jsx**
   - Wire up useTodos hook
   - Connect TodoForm to addTodo
   - Connect TodoList with todos data
@@ -83,6 +83,7 @@
 - **Task 4: Create TodoItem component** - Added `src/components/TodoItem.jsx` with checkbox, title, due date display, edit/delete buttons, completion and overdue styling. Includes 22 tests.
 - **Task 5: Create TodoList component** - Added `src/components/TodoList.jsx` to render a list of TodoItem components with empty state handling. Includes 15 tests.
 - **Task 6: Create EditTodoForm component** - Added `src/components/EditTodoForm.jsx` with pre-filled inputs for editing title and due date, save/cancel functionality, and keyboard shortcuts (Enter to save, Escape to cancel). Includes 17 tests.
+- **Task 7: Integrate components in App.jsx** - Wired up useTodos hook with TodoForm, TodoItem, and EditTodoForm. Added edit state management to switch between view and edit modes. Cleaned up default Vite styling.
 
 ## Notes
 
