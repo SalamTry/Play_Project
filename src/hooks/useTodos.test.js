@@ -1078,4 +1078,381 @@ describe('useTodos', () => {
       expect(saveTodos.mock.calls[0][0][0].title).toBe('New')
     })
   })
+
+  describe('bulkComplete', () => {
+    it('marks multiple todos as completed', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+        { id: '2', title: 'Todo 2', completed: false },
+        { id: '3', title: 'Todo 3', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkComplete(['1', '3'])
+      })
+
+      expect(result.current.todos[0].completed).toBe(true)
+      expect(result.current.todos[1].completed).toBe(false)
+      expect(result.current.todos[2].completed).toBe(true)
+    })
+
+    it('does not affect already completed todos', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: true },
+        { id: '2', title: 'Todo 2', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkComplete(['1', '2'])
+      })
+
+      expect(result.current.todos[0].completed).toBe(true)
+      expect(result.current.todos[1].completed).toBe(true)
+    })
+
+    it('handles empty array', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkComplete([])
+      })
+
+      expect(result.current.todos[0].completed).toBe(false)
+    })
+
+    it('ignores non-existent IDs', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkComplete(['nonexistent'])
+      })
+
+      expect(result.current.todos[0].completed).toBe(false)
+    })
+
+    it('persists to storage', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+        { id: '2', title: 'Todo 2', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      saveTodos.mockClear()
+
+      act(() => {
+        result.current.bulkComplete(['1', '2'])
+      })
+
+      expect(saveTodos).toHaveBeenCalled()
+      expect(saveTodos.mock.calls[0][0][0].completed).toBe(true)
+      expect(saveTodos.mock.calls[0][0][1].completed).toBe(true)
+    })
+  })
+
+  describe('bulkDelete', () => {
+    it('deletes multiple todos', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+        { id: '2', title: 'Todo 2', completed: false },
+        { id: '3', title: 'Todo 3', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkDelete(['1', '3'])
+      })
+
+      expect(result.current.todos).toHaveLength(1)
+      expect(result.current.todos[0].id).toBe('2')
+    })
+
+    it('handles empty array', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkDelete([])
+      })
+
+      expect(result.current.todos).toHaveLength(1)
+    })
+
+    it('ignores non-existent IDs', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkDelete(['nonexistent'])
+      })
+
+      expect(result.current.todos).toHaveLength(1)
+    })
+
+    it('deletes all todos when all IDs are provided', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+        { id: '2', title: 'Todo 2', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkDelete(['1', '2'])
+      })
+
+      expect(result.current.todos).toHaveLength(0)
+    })
+
+    it('persists to storage', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+        { id: '2', title: 'Todo 2', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      saveTodos.mockClear()
+
+      act(() => {
+        result.current.bulkDelete(['1'])
+      })
+
+      expect(saveTodos).toHaveBeenCalled()
+      expect(saveTodos.mock.calls[0][0]).toHaveLength(1)
+      expect(saveTodos.mock.calls[0][0][0].id).toBe('2')
+    })
+  })
+
+  describe('bulkSetPriority', () => {
+    it('sets priority for multiple todos', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, priority: null },
+        { id: '2', title: 'Todo 2', completed: false, priority: null },
+        { id: '3', title: 'Todo 3', completed: false, priority: null },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkSetPriority(['1', '3'], 'high')
+      })
+
+      expect(result.current.todos[0].priority).toBe('high')
+      expect(result.current.todos[1].priority).toBe(null)
+      expect(result.current.todos[2].priority).toBe('high')
+    })
+
+    it('overwrites existing priority', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, priority: 'low' },
+        { id: '2', title: 'Todo 2', completed: false, priority: 'medium' },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkSetPriority(['1', '2'], 'high')
+      })
+
+      expect(result.current.todos[0].priority).toBe('high')
+      expect(result.current.todos[1].priority).toBe('high')
+    })
+
+    it('clears priority when set to null', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, priority: 'high' },
+        { id: '2', title: 'Todo 2', completed: false, priority: 'medium' },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkSetPriority(['1', '2'], null)
+      })
+
+      expect(result.current.todos[0].priority).toBe(null)
+      expect(result.current.todos[1].priority).toBe(null)
+    })
+
+    it('handles empty array', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, priority: null },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkSetPriority([], 'high')
+      })
+
+      expect(result.current.todos[0].priority).toBe(null)
+    })
+
+    it('ignores non-existent IDs', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, priority: null },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkSetPriority(['nonexistent'], 'high')
+      })
+
+      expect(result.current.todos[0].priority).toBe(null)
+    })
+
+    it('persists to storage', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, priority: null },
+        { id: '2', title: 'Todo 2', completed: false, priority: null },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      saveTodos.mockClear()
+
+      act(() => {
+        result.current.bulkSetPriority(['1', '2'], 'medium')
+      })
+
+      expect(saveTodos).toHaveBeenCalled()
+      expect(saveTodos.mock.calls[0][0][0].priority).toBe('medium')
+      expect(saveTodos.mock.calls[0][0][1].priority).toBe('medium')
+    })
+  })
+
+  describe('bulkAddTag', () => {
+    it('adds tag to multiple todos', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, tags: [] },
+        { id: '2', title: 'Todo 2', completed: false, tags: [] },
+        { id: '3', title: 'Todo 3', completed: false, tags: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const tag = { id: 'tag-1', name: 'Work', color: '#ff0000' }
+
+      act(() => {
+        result.current.bulkAddTag(['1', '3'], tag)
+      })
+
+      expect(result.current.todos[0].tags).toEqual([tag])
+      expect(result.current.todos[1].tags).toEqual([])
+      expect(result.current.todos[2].tags).toEqual([tag])
+    })
+
+    it('appends tag to existing tags', () => {
+      const existingTag = { id: 'tag-1', name: 'Personal', color: '#0000ff' }
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, tags: [existingTag] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const newTag = { id: 'tag-2', name: 'Work', color: '#ff0000' }
+
+      act(() => {
+        result.current.bulkAddTag(['1'], newTag)
+      })
+
+      expect(result.current.todos[0].tags).toEqual([existingTag, newTag])
+    })
+
+    it('does not add duplicate tags', () => {
+      const existingTag = { id: 'tag-1', name: 'Work', color: '#ff0000' }
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, tags: [existingTag] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.bulkAddTag(['1'], existingTag)
+      })
+
+      expect(result.current.todos[0].tags).toHaveLength(1)
+      expect(result.current.todos[0].tags).toEqual([existingTag])
+    })
+
+    it('handles todos without tags array', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const tag = { id: 'tag-1', name: 'Work', color: '#ff0000' }
+
+      act(() => {
+        result.current.bulkAddTag(['1'], tag)
+      })
+
+      expect(result.current.todos[0].tags).toEqual([tag])
+    })
+
+    it('handles empty array', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, tags: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const tag = { id: 'tag-1', name: 'Work', color: '#ff0000' }
+
+      act(() => {
+        result.current.bulkAddTag([], tag)
+      })
+
+      expect(result.current.todos[0].tags).toEqual([])
+    })
+
+    it('ignores non-existent IDs', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, tags: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const tag = { id: 'tag-1', name: 'Work', color: '#ff0000' }
+
+      act(() => {
+        result.current.bulkAddTag(['nonexistent'], tag)
+      })
+
+      expect(result.current.todos[0].tags).toEqual([])
+    })
+
+    it('persists to storage', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo 1', completed: false, tags: [] },
+        { id: '2', title: 'Todo 2', completed: false, tags: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const tag = { id: 'tag-1', name: 'Work', color: '#ff0000' }
+      saveTodos.mockClear()
+
+      act(() => {
+        result.current.bulkAddTag(['1', '2'], tag)
+      })
+
+      expect(saveTodos).toHaveBeenCalled()
+      expect(saveTodos.mock.calls[0][0][0].tags).toEqual([tag])
+      expect(saveTodos.mock.calls[0][0][1].tags).toEqual([tag])
+    })
+  })
 })

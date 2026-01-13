@@ -186,6 +186,60 @@ export function useTodos() {
     })
   }
 
+  /**
+   * Mark multiple todos as completed
+   * @param {Array<string>} ids - Array of todo IDs to mark as completed
+   */
+  function bulkComplete(ids) {
+    const idSet = new Set(ids)
+    setTodos((prev) =>
+      prev.map((todo) =>
+        idSet.has(todo.id) ? { ...todo, completed: true } : todo
+      )
+    )
+  }
+
+  /**
+   * Delete multiple todos
+   * @param {Array<string>} ids - Array of todo IDs to delete
+   */
+  function bulkDelete(ids) {
+    const idSet = new Set(ids)
+    setTodos((prev) => prev.filter((todo) => !idSet.has(todo.id)))
+  }
+
+  /**
+   * Set priority for multiple todos
+   * @param {Array<string>} ids - Array of todo IDs to update
+   * @param {string|null} priority - Priority to set ('high' | 'medium' | 'low' | null)
+   */
+  function bulkSetPriority(ids, priority) {
+    const idSet = new Set(ids)
+    setTodos((prev) =>
+      prev.map((todo) =>
+        idSet.has(todo.id) ? { ...todo, priority } : todo
+      )
+    )
+  }
+
+  /**
+   * Add a tag to multiple todos
+   * @param {Array<string>} ids - Array of todo IDs to update
+   * @param {Object} tag - Tag object with id, name, color properties
+   */
+  function bulkAddTag(ids, tag) {
+    const idSet = new Set(ids)
+    setTodos((prev) =>
+      prev.map((todo) => {
+        if (!idSet.has(todo.id)) return todo
+        const existingTags = todo.tags || []
+        // Avoid duplicate tags
+        if (existingTags.some((t) => t.id === tag.id)) return todo
+        return { ...todo, tags: [...existingTags, tag] }
+      })
+    )
+  }
+
   return {
     todos,
     addTodo,
@@ -196,5 +250,9 @@ export function useTodos() {
     updateSubtask,
     deleteSubtask,
     reorderTodos,
+    bulkComplete,
+    bulkDelete,
+    bulkSetPriority,
+    bulkAddTag,
   }
 }
