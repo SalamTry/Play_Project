@@ -4,6 +4,7 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 import { useTodos } from './hooks/useTodos'
 import { useFilter } from './hooks/useFilter'
 import { useTheme } from './hooks/useTheme'
+import { useSorting } from './hooks/useSorting'
 import { TodoForm } from './components/TodoForm'
 import { TodoList } from './components/TodoList'
 import { EditTodoForm } from './components/EditTodoForm'
@@ -11,6 +12,7 @@ import { FilterBar } from './components/FilterBar'
 import { SearchBar } from './components/SearchBar'
 import { ThemeToggle } from './components/ThemeToggle'
 import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp'
+import { SortDropdown } from './components/SortDropdown'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 function App() {
@@ -25,6 +27,7 @@ function App() {
     filterTodos,
   } = useFilter()
   const { isDark, toggleTheme } = useTheme()
+  const { sortBy, setSortBy, sortDirection, setSortDirection, sortTodos } = useSorting()
   const [editingId, setEditingId] = useState(null)
   const [selectedTodoId, setSelectedTodoId] = useState(null)
   const [isShortcutsHelpOpen, setIsShortcutsHelpOpen] = useState(false)
@@ -61,7 +64,7 @@ function App() {
     }
   }, [isDark])
 
-  const filteredTodos = filterTodos(todos)
+  const filteredTodos = sortTodos(filterTodos(todos))
 
   // Keyboard shortcut handlers
   const focusNewTodo = useCallback(() => {
@@ -170,12 +173,20 @@ function App() {
 
           <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 p-4 sm:p-6 mb-4 sm:mb-6 space-y-4 transition-colors">
             <SearchBar ref={searchBarRef} value={searchQuery} onChange={setSearchQuery} />
-            <FilterBar
-              filter={filter}
-              onFilterChange={setFilter}
-              priorityFilter={priorityFilter}
-              onPriorityFilterChange={setPriorityFilter}
-            />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <FilterBar
+                filter={filter}
+                onFilterChange={setFilter}
+                priorityFilter={priorityFilter}
+                onPriorityFilterChange={setPriorityFilter}
+              />
+              <SortDropdown
+                sortBy={sortBy}
+                onSortByChange={setSortBy}
+                sortDirection={sortDirection}
+                onSortDirectionChange={setSortDirection}
+              />
+            </div>
           </div>
 
           {filteredTodos.length === 0 ? (
@@ -203,6 +214,7 @@ function App() {
               onSave={handleSave}
               onCancelEdit={handleCancelEdit}
               EditTodoForm={EditTodoForm}
+              enableDragDrop={sortBy === 'custom'}
             />
           )}
         </div>
