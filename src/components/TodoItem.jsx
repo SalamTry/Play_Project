@@ -1,3 +1,5 @@
+import { getTagColorStyle } from './TagInput'
+
 /**
  * Helper function to check if a date is today
  * @param {string} dateString - ISO date string
@@ -71,13 +73,20 @@ function getPriorityStyle(priority) {
  * @param {boolean} props.todo.completed - Whether todo is completed
  * @param {string|null} props.todo.dueDate - Optional due date as ISO string
  * @param {'high'|'medium'|'low'|null} props.todo.priority - Optional priority level
+ * @param {Array} props.todo.tags - Optional array of tags
  * @param {Function} props.onToggle - Callback when checkbox is toggled
  * @param {Function} props.onDelete - Callback when delete button is clicked
  * @param {Function} props.onEdit - Callback when edit button is clicked
  */
 export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
-  const { id, title, completed, dueDate, priority } = todo
+  const { id, title, completed, dueDate, priority, tags = [] } = todo
   const priorityStyle = getPriorityStyle(priority)
+
+  // Split tags into visible and overflow
+  const MAX_VISIBLE_TAGS = 3
+  const visibleTags = tags.slice(0, MAX_VISIBLE_TAGS)
+  const overflowTags = tags.slice(MAX_VISIBLE_TAGS)
+  const overflowCount = overflowTags.length
 
   const showOverdueStyle = dueDate && isOverdue(dueDate) && !completed
 
@@ -122,6 +131,35 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           >
             {formatDueDate(dueDate)}
           </p>
+        )}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 mt-1.5" aria-label="Tags">
+            {visibleTags.map((tag) => {
+              const colorStyle = getTagColorStyle(tag.color)
+              return (
+                <span
+                  key={tag.id}
+                  className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${colorStyle.bg} ${colorStyle.text}`}
+                >
+                  {tag.name}
+                </span>
+              )
+            })}
+            {overflowCount > 0 && (
+              <span
+                className="relative inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 cursor-default group"
+                aria-label={`${overflowCount} more tags: ${overflowTags.map((t) => t.name).join(', ')}`}
+              >
+                +{overflowCount}
+                <span
+                  role="tooltip"
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 rounded shadow-lg whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10"
+                >
+                  {overflowTags.map((t) => t.name).join(', ')}
+                </span>
+              </span>
+            )}
+          </div>
         )}
       </div>
 

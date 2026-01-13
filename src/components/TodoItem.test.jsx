@@ -277,4 +277,95 @@ describe('TodoItem', () => {
       ).toBeInTheDocument()
     })
   })
+
+  describe('tags display', () => {
+    const createTags = (count) =>
+      Array.from({ length: count }, (_, i) => ({
+        id: `tag-${i + 1}`,
+        name: `Tag ${i + 1}`,
+        color: ['blue', 'red', 'green', 'yellow', 'purple'][i % 5],
+      }))
+
+    it('does not show tags section when there are no tags', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.queryByLabelText('Tags')).not.toBeInTheDocument()
+    })
+
+    it('renders tags as colored pills below todo text', () => {
+      const todoWithTags = {
+        ...baseTodo,
+        tags: createTags(2),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithTags} />)
+
+      expect(screen.getByLabelText('Tags')).toBeInTheDocument()
+      expect(screen.getByText('Tag 1')).toBeInTheDocument()
+      expect(screen.getByText('Tag 2')).toBeInTheDocument()
+    })
+
+    it('shows tag pills with matching background color styling', () => {
+      const todoWithTags = {
+        ...baseTodo,
+        tags: [{ id: 'tag-1', name: 'Blue Tag', color: 'blue' }],
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithTags} />)
+
+      const tagPill = screen.getByText('Blue Tag')
+      expect(tagPill).toHaveClass('bg-blue-100')
+      expect(tagPill).toHaveClass('text-blue-700')
+    })
+
+    it('shows max 3 tags visible', () => {
+      const todoWithTags = {
+        ...baseTodo,
+        tags: createTags(3),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithTags} />)
+
+      expect(screen.getByText('Tag 1')).toBeInTheDocument()
+      expect(screen.getByText('Tag 2')).toBeInTheDocument()
+      expect(screen.getByText('Tag 3')).toBeInTheDocument()
+      expect(screen.queryByText('+1')).not.toBeInTheDocument()
+    })
+
+    it('shows +N for overflow when more than 3 tags', () => {
+      const todoWithTags = {
+        ...baseTodo,
+        tags: createTags(5),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithTags} />)
+
+      expect(screen.getByText('Tag 1')).toBeInTheDocument()
+      expect(screen.getByText('Tag 2')).toBeInTheDocument()
+      expect(screen.getByText('Tag 3')).toBeInTheDocument()
+      expect(screen.queryByText('Tag 4')).not.toBeInTheDocument()
+      expect(screen.queryByText('Tag 5')).not.toBeInTheDocument()
+      expect(screen.getByText('+2')).toBeInTheDocument()
+    })
+
+    it('overflow indicator has accessible label with remaining tag names', () => {
+      const todoWithTags = {
+        ...baseTodo,
+        tags: createTags(5),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithTags} />)
+
+      expect(
+        screen.getByLabelText('2 more tags: Tag 4, Tag 5')
+      ).toBeInTheDocument()
+    })
+
+    it('shows tooltip with remaining tags on overflow indicator', () => {
+      const todoWithTags = {
+        ...baseTodo,
+        tags: createTags(4),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithTags} />)
+
+      const tooltip = screen.getByRole('tooltip')
+      expect(tooltip).toBeInTheDocument()
+      expect(tooltip).toHaveTextContent('Tag 4')
+    })
+  })
 })
