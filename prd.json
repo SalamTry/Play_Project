@@ -1,16 +1,16 @@
 {
-  "project": "Todo App Enhancement",
-  "created": "2025-01-13",
+  "project": "Todo App Phase 2",
+  "created": "2026-01-13",
   "stories": [
     {
       "id": "US-001",
-      "title": "Add priority field to todo model",
-      "description": "Extend useTodos hook to support priority field",
+      "title": "Add tags field to todo model",
+      "description": "Extend useTodos hook to support tags",
       "acceptance": [
-        "useTodos hook accepts priority in addTodo",
-        "priority can be: high, medium, low, or null",
-        "priority persists to localStorage",
-        "updateTodo can change priority"
+        "useTodos hook accepts tags array in addTodo",
+        "Each tag has id, name, and color properties",
+        "Tags persist to localStorage",
+        "updateTodo can modify tags array"
       ],
       "files": ["src/hooks/useTodos.js"],
       "tests": ["src/hooks/useTodos.test.js"],
@@ -18,27 +18,28 @@
     },
     {
       "id": "US-002",
-      "title": "Add priority dropdown to TodoForm",
-      "description": "Add priority selection when creating todos",
+      "title": "Create TagInput component",
+      "description": "Component for adding and removing tags",
       "acceptance": [
-        "Dropdown with options: None, Low, Medium, High",
-        "Default selection is None (null)",
-        "Priority passed to onAddTodo callback",
-        "Form resets priority after submit"
+        "Text input for new tag name",
+        "Color picker with 8 predefined colors",
+        "Add button creates new tag",
+        "Tags displayed as removable pills",
+        "Click X on pill removes tag"
       ],
-      "files": ["src/components/TodoForm.jsx"],
-      "tests": ["src/components/TodoForm.test.jsx"],
+      "files": ["src/components/TagInput.jsx"],
+      "tests": ["src/components/TagInput.test.jsx"],
       "passes": true
     },
     {
       "id": "US-003",
-      "title": "Display priority badge on TodoItem",
-      "description": "Show colored priority indicator on todo items",
+      "title": "Display tags on TodoItem",
+      "description": "Show tag pills on todo items",
       "acceptance": [
-        "High priority: rose-500 badge",
-        "Medium priority: amber-500 badge",
-        "Low priority: emerald-500 badge",
-        "No badge if priority is null"
+        "Tags render as colored pills below todo text",
+        "Pills show tag name with matching background color",
+        "Max 3 tags visible, +N for overflow",
+        "Hover on +N shows tooltip with remaining tags"
       ],
       "files": ["src/components/TodoItem.jsx"],
       "tests": ["src/components/TodoItem.test.jsx"],
@@ -46,154 +47,298 @@
     },
     {
       "id": "US-004",
-      "title": "Add priority to EditTodoForm",
-      "description": "Allow editing priority of existing todos",
+      "title": "Add tag filtering to useFilter",
+      "description": "Extend filter hook to support tag filtering",
       "acceptance": [
-        "Priority dropdown in edit form",
-        "Pre-filled with current priority",
-        "Updated priority saved on submit"
-      ],
-      "files": ["src/components/EditTodoForm.jsx"],
-      "tests": ["src/components/EditTodoForm.test.jsx"],
-      "passes": true
-    },
-    {
-      "id": "US-005",
-      "title": "Create useFilter hook",
-      "description": "Hook for filtering and searching todos",
-      "acceptance": [
-        "Exports: filter, setFilter, searchQuery, setSearchQuery, filterTodos",
-        "filter options: all, active, completed",
-        "filterTodos returns filtered array",
-        "Search is case-insensitive"
+        "Add selectedTags state (array of tag IDs)",
+        "filterTodos filters by selected tags",
+        "Multi-select: show todos matching ANY selected tag",
+        "Empty selectedTags shows all todos"
       ],
       "files": ["src/hooks/useFilter.js"],
       "tests": ["src/hooks/useFilter.test.js"],
       "passes": true
     },
     {
-      "id": "US-006",
-      "title": "Create FilterBar component",
-      "description": "UI for filtering todos by status",
+      "id": "US-005",
+      "title": "Create TagFilterBar component",
+      "description": "UI for filtering todos by tags",
       "acceptance": [
-        "Three buttons: All, Active, Completed",
-        "Active button highlighted",
-        "Calls onFilterChange when clicked"
+        "Shows all unique tags from todos",
+        "Tags are clickable to toggle filter",
+        "Selected tags have highlighted style",
+        "Clear all filters button"
       ],
-      "files": ["src/components/FilterBar.jsx"],
-      "tests": ["src/components/FilterBar.test.jsx"],
+      "files": ["src/components/TagFilterBar.jsx"],
+      "tests": ["src/components/TagFilterBar.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-006",
+      "title": "Add subtasks field to todo model",
+      "description": "Extend useTodos hook to support subtasks",
+      "acceptance": [
+        "useTodos hook accepts subtasks array in addTodo",
+        "Each subtask has id, text, and completed properties",
+        "Subtasks persist to localStorage",
+        "addSubtask, updateSubtask, deleteSubtask functions"
+      ],
+      "files": ["src/hooks/useTodos.js"],
+      "tests": ["src/hooks/useTodos.test.js"],
       "passes": true
     },
     {
       "id": "US-007",
-      "title": "Create SearchBar component",
-      "description": "Text input for searching todos",
+      "title": "Create SubtaskList component",
+      "description": "Display and manage subtasks",
       "acceptance": [
-        "Input field with placeholder",
-        "Search icon",
-        "Clear button when text present",
-        "Debounced onChange (300ms)"
+        "Renders list of subtasks with checkboxes",
+        "Checkbox toggles subtask completion",
+        "Delete button removes subtask",
+        "Input field to add new subtask",
+        "Completed subtasks have strikethrough"
       ],
-      "files": ["src/components/SearchBar.jsx"],
-      "tests": ["src/components/SearchBar.test.jsx"],
+      "files": ["src/components/SubtaskList.jsx"],
+      "tests": ["src/components/SubtaskList.test.jsx"],
       "passes": true
     },
     {
       "id": "US-008",
-      "title": "Integrate filter and search in App",
-      "description": "Connect filter components to todo list",
+      "title": "Show subtask progress on TodoItem",
+      "description": "Display subtask completion count",
       "acceptance": [
-        "FilterBar and SearchBar rendered in App",
-        "Todo list responds to filter changes",
-        "Todo list responds to search query",
-        "Shows count of filtered results"
+        "Progress indicator shows X/Y format",
+        "Progress bar visual (optional)",
+        "Hidden if no subtasks",
+        "Click expands subtask list inline"
+      ],
+      "files": ["src/components/TodoItem.jsx"],
+      "tests": ["src/components/TodoItem.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-009",
+      "title": "Add subtasks to EditTodoForm",
+      "description": "Edit subtasks in the edit form",
+      "acceptance": [
+        "SubtaskList component integrated",
+        "Can add/remove/toggle subtasks while editing",
+        "Changes saved on form submit"
+      ],
+      "files": ["src/components/EditTodoForm.jsx"],
+      "tests": ["src/components/EditTodoForm.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-010",
+      "title": "Create useKeyboardShortcuts hook",
+      "description": "Global keyboard shortcut handler",
+      "acceptance": [
+        "Registers keydown event listener",
+        "Handles Ctrl/Cmd modifier detection",
+        "Callback system for shortcut actions",
+        "Cleanup on unmount"
+      ],
+      "files": ["src/hooks/useKeyboardShortcuts.js"],
+      "tests": ["src/hooks/useKeyboardShortcuts.test.js"],
+      "passes": true
+    },
+    {
+      "id": "US-011",
+      "title": "Implement core keyboard shortcuts",
+      "description": "Wire up shortcuts in App.jsx",
+      "acceptance": [
+        "Ctrl/Cmd+N focuses new todo input",
+        "Ctrl/Cmd+F focuses search input",
+        "Ctrl/Cmd+1/2/3 switches filter tabs",
+        "Escape closes modals and clears selection",
+        "Delete/Backspace deletes selected todo"
       ],
       "files": ["src/App.jsx"],
       "tests": [],
       "passes": true
     },
     {
-      "id": "US-009",
-      "title": "Create useTheme hook",
-      "description": "Theme management with localStorage",
-      "acceptance": [
-        "Exports: theme, toggleTheme, isDark",
-        "Persists to localStorage key 'theme'",
-        "Respects prefers-color-scheme on first load",
-        "Adds/removes 'dark' class on document.documentElement"
-      ],
-      "files": ["src/hooks/useTheme.js"],
-      "tests": ["src/hooks/useTheme.test.js"],
-      "passes": true
-    },
-    {
-      "id": "US-010",
-      "title": "Create ThemeToggle component",
-      "description": "Button to toggle dark mode",
-      "acceptance": [
-        "Sun icon in dark mode, moon icon in light mode",
-        "Accessible aria-label",
-        "Smooth icon transition"
-      ],
-      "files": ["src/components/ThemeToggle.jsx"],
-      "tests": ["src/components/ThemeToggle.test.jsx"],
-      "passes": true
-    },
-    {
-      "id": "US-011",
-      "title": "Apply dark mode to all components",
-      "description": "Add dark: variants throughout the app",
-      "acceptance": [
-        "App.jsx includes ThemeToggle in header",
-        "All components have dark: background variants",
-        "All components have dark: text variants",
-        "Smooth color transitions"
-      ],
-      "files": ["src/App.jsx", "src/components/TodoForm.jsx", "src/components/TodoItem.jsx", "src/components/TodoList.jsx", "src/components/EditTodoForm.jsx"],
-      "tests": [],
-      "passes": true
-    },
-    {
       "id": "US-012",
-      "title": "Add Framer Motion animations",
-      "description": "Animate todo list items",
+      "title": "Create KeyboardShortcutsHelp modal",
+      "description": "Modal showing all shortcuts",
       "acceptance": [
-        "framer-motion installed",
-        "Todo items fade in on add",
-        "Todo items fade out on delete",
-        "Smooth layout animations on reorder"
+        "Opens with ? key press",
+        "Lists all shortcuts with descriptions",
+        "Closes on Escape or click outside",
+        "Accessible with proper focus trap"
       ],
-      "files": ["src/App.jsx", "package.json"],
-      "tests": [],
-      "passes": true
+      "files": ["src/components/KeyboardShortcutsHelp.jsx"],
+      "tests": ["src/components/KeyboardShortcutsHelp.test.jsx"],
+      "passes": false
     },
     {
       "id": "US-013",
-      "title": "Add micro-interactions",
-      "description": "Polish button and input interactions",
+      "title": "Install and configure dnd-kit",
+      "description": "Set up drag and drop library",
       "acceptance": [
-        "Buttons have hover:scale effect",
-        "Buttons have active:scale effect",
-        "Inputs have focus ring",
-        "Cards have hover shadow"
+        "@dnd-kit/core installed",
+        "@dnd-kit/sortable installed",
+        "DndContext configured in App.jsx",
+        "Basic drag works without errors"
       ],
-      "files": ["src/components/TodoForm.jsx", "src/components/TodoItem.jsx", "src/components/FilterBar.jsx"],
+      "files": ["package.json", "src/App.jsx"],
       "tests": [],
-      "passes": true
+      "passes": false
     },
     {
       "id": "US-014",
-      "title": "Final polish and testing",
-      "description": "Ensure everything works together",
+      "title": "Add order field to todo model",
+      "description": "Track custom order for todos",
       "acceptance": [
-        "All tests pass",
-        "Build succeeds",
-        "No console errors",
-        "Visual inspection passes"
+        "Order field added to todo objects",
+        "New todos get order = max + 1",
+        "reorderTodos function updates order values",
+        "Order persists to localStorage"
+      ],
+      "files": ["src/hooks/useTodos.js"],
+      "tests": ["src/hooks/useTodos.test.js"],
+      "passes": false
+    },
+    {
+      "id": "US-015",
+      "title": "Create DraggableTodoItem",
+      "description": "Wrapper for draggable todo items",
+      "acceptance": [
+        "Uses useSortable hook from dnd-kit",
+        "Drag handle visible on hover",
+        "Transform and transition during drag",
+        "Drop placeholder shown"
+      ],
+      "files": ["src/components/DraggableTodoItem.jsx"],
+      "tests": ["src/components/DraggableTodoItem.test.jsx"],
+      "passes": false
+    },
+    {
+      "id": "US-016",
+      "title": "Integrate drag & drop in TodoList",
+      "description": "Enable reordering in the list",
+      "acceptance": [
+        "SortableContext wraps todo items",
+        "onDragEnd updates todo order",
+        "Smooth animations during reorder",
+        "Works with current filter applied"
+      ],
+      "files": ["src/components/TodoList.jsx"],
+      "tests": ["src/components/TodoList.test.jsx"],
+      "passes": false
+    },
+    {
+      "id": "US-017",
+      "title": "Create useSelection hook",
+      "description": "Manage multi-select state",
+      "acceptance": [
+        "selectedIds state (Set)",
+        "toggleSelection, selectAll, clearSelection functions",
+        "isSelected helper function",
+        "Selection count getter"
+      ],
+      "files": ["src/hooks/useSelection.js"],
+      "tests": ["src/hooks/useSelection.test.js"],
+      "passes": false
+    },
+    {
+      "id": "US-018",
+      "title": "Add selection checkbox to TodoItem",
+      "description": "Enable selecting individual todos",
+      "acceptance": [
+        "Checkbox visible on left side",
+        "Checkbox toggles selection state",
+        "Selected items have highlight background",
+        "Shift+click selects range (optional)"
+      ],
+      "files": ["src/components/TodoItem.jsx"],
+      "tests": ["src/components/TodoItem.test.jsx"],
+      "passes": false
+    },
+    {
+      "id": "US-019",
+      "title": "Create SelectionToolbar component",
+      "description": "Toolbar for bulk actions",
+      "acceptance": [
+        "Shows when items are selected",
+        "Displays selection count",
+        "Buttons: Complete All, Delete All, Clear Selection",
+        "Slide in animation from top"
+      ],
+      "files": ["src/components/SelectionToolbar.jsx"],
+      "tests": ["src/components/SelectionToolbar.test.jsx"],
+      "passes": false
+    },
+    {
+      "id": "US-020",
+      "title": "Implement bulk actions in useTodos",
+      "description": "Add bulk operation functions",
+      "acceptance": [
+        "bulkComplete(ids) marks all as completed",
+        "bulkDelete(ids) removes all selected",
+        "bulkSetPriority(ids, priority) updates priority",
+        "bulkAddTag(ids, tag) adds tag to all"
+      ],
+      "files": ["src/hooks/useTodos.js"],
+      "tests": ["src/hooks/useTodos.test.js"],
+      "passes": false
+    },
+    {
+      "id": "US-021",
+      "title": "Create useSorting hook",
+      "description": "Manage sort state and logic",
+      "acceptance": [
+        "sortBy state: custom, date, priority, alpha",
+        "sortDirection state: asc, desc",
+        "sortTodos function sorts array",
+        "Persists to localStorage"
+      ],
+      "files": ["src/hooks/useSorting.js"],
+      "tests": ["src/hooks/useSorting.test.js"],
+      "passes": false
+    },
+    {
+      "id": "US-022",
+      "title": "Create SortDropdown component",
+      "description": "UI for selecting sort option",
+      "acceptance": [
+        "Dropdown with sort options",
+        "Toggle direction button",
+        "Current sort option highlighted",
+        "Icons for each sort type"
+      ],
+      "files": ["src/components/SortDropdown.jsx"],
+      "tests": ["src/components/SortDropdown.test.jsx"],
+      "passes": false
+    },
+    {
+      "id": "US-023",
+      "title": "Integrate sorting in App",
+      "description": "Connect sorting to todo list",
+      "acceptance": [
+        "SortDropdown rendered in toolbar",
+        "Todo list sorted according to selection",
+        "Custom order only works when sortBy=custom",
+        "Sort + filter work together"
+      ],
+      "files": ["src/App.jsx"],
+      "tests": [],
+      "passes": false
+    },
+    {
+      "id": "US-024",
+      "title": "Final integration and polish",
+      "description": "Ensure all features work together",
+      "acceptance": [
+        "npm run test:run passes with 0 failures",
+        "npm run build succeeds without errors",
+        "Tags, subtasks, drag-and-drop, and bulk actions work together",
+        "Keyboard shortcuts function across all views"
       ],
       "files": [],
       "tests": [],
-      "passes": true
+      "passes": false
     }
   ]
 }

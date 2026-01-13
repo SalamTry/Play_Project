@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useTodos } from './hooks/useTodos'
 import { useFilter } from './hooks/useFilter'
 import { useTheme } from './hooks/useTheme'
@@ -9,6 +9,7 @@ import { FilterBar } from './components/FilterBar'
 import { SearchBar } from './components/SearchBar'
 import { ThemeToggle } from './components/ThemeToggle'
 import { AnimatedList, AnimatedItem } from './components/AnimatedList'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 function App() {
   const { todos, addTodo, deleteTodo, toggleTodo, updateTodo } = useTodos()
@@ -23,6 +24,10 @@ function App() {
   } = useFilter()
   const { isDark, toggleTheme } = useTheme()
   const [editingId, setEditingId] = useState(null)
+  const [selectedTodoId, setSelectedTodoId] = useState(null)
+
+  const todoFormRef = useRef(null)
+  const searchBarRef = useRef(null)
 
   // Apply dark class to html element based on theme
   useEffect(() => {
@@ -34,6 +39,63 @@ function App() {
   }, [isDark])
 
   const filteredTodos = filterTodos(todos)
+
+  // Keyboard shortcut handlers
+  const focusNewTodo = useCallback(() => {
+    todoFormRef.current?.focus()
+  }, [])
+
+  const focusSearch = useCallback(() => {
+    searchBarRef.current?.focus()
+  }, [])
+
+  const switchToAllFilter = useCallback(() => {
+    setFilter('all')
+  }, [setFilter])
+
+  const switchToActiveFilter = useCallback(() => {
+    setFilter('active')
+  }, [setFilter])
+
+  const switchToCompletedFilter = useCallback(() => {
+    setFilter('completed')
+  }, [setFilter])
+
+  const handleEscape = useCallback(() => {
+    setEditingId(null)
+    setSelectedTodoId(null)
+  }, [])
+
+  const deleteSelectedTodo = useCallback(() => {
+    if (selectedTodoId && !editingId) {
+      deleteTodo(selectedTodoId)
+      setSelectedTodoId(null)
+    }
+  }, [selectedTodoId, editingId, deleteTodo])
+
+  const shortcuts = useMemo(
+    () => ({
+      'ctrl+n': focusNewTodo,
+      'ctrl+f': focusSearch,
+      'ctrl+1': switchToAllFilter,
+      'ctrl+2': switchToActiveFilter,
+      'ctrl+3': switchToCompletedFilter,
+      escape: handleEscape,
+      delete: deleteSelectedTodo,
+      backspace: deleteSelectedTodo,
+    }),
+    [
+      focusNewTodo,
+      focusSearch,
+      switchToAllFilter,
+      switchToActiveFilter,
+      switchToCompletedFilter,
+      handleEscape,
+      deleteSelectedTodo,
+    ]
+  )
+
+  useKeyboardShortcuts(shortcuts)
 
   function handleEdit(id) {
     setEditingId(id)
@@ -65,11 +127,11 @@ function App() {
         </header>
 
         <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 p-4 sm:p-6 mb-4 sm:mb-6 transition-colors">
-          <TodoForm onAddTodo={addTodo} />
+          <TodoForm ref={todoFormRef} onAddTodo={addTodo} />
         </div>
 
         <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 p-4 sm:p-6 mb-4 sm:mb-6 space-y-4 transition-colors">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          <SearchBar ref={searchBarRef} value={searchQuery} onChange={setSearchQuery} />
           <FilterBar
             filter={filter}
             onFilterChange={setFilter}
@@ -109,6 +171,8 @@ function App() {
                         onToggle={toggleTodo}
                         onDelete={deleteTodo}
                         onEdit={handleEdit}
+                        isSelected={selectedTodoId === todo.id}
+                        onSelect={setSelectedTodoId}
                       />
                     )}
                   </li>

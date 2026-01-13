@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, forwardRef } from 'react'
 
 /**
  * Form component for adding new todos
  * @param {Object} props
  * @param {Function} props.onAddTodo - Callback when a todo is added (title, dueDate, priority)
  */
-export function TodoForm({ onAddTodo }) {
+export const TodoForm = forwardRef(function TodoForm({ onAddTodo }, ref) {
   const [title, setTitle] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [priority, setPriority] = useState('')
@@ -38,6 +38,7 @@ export function TodoForm({ onAddTodo }) {
           Task
         </label>
         <input
+          ref={ref}
           type="text"
           id="todo-title"
           value={title}
@@ -85,4 +86,4 @@ export function TodoForm({ onAddTodo }) {
       </button>
     </form>
   )
-}
+})

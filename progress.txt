@@ -1,2 +1,121 @@
-# Ralph Progress Log
+# Todo App Phase 2 - Progress Log
 
+Started: 2026-01-13
+
+## Stories: 11/24 complete
+
+---
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 05:47 | MODE: plan
+═══════════════════════════════════════
+[05:48] PLANNING_COMPLETE: 24 stories total
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 05:48 | MODE: plan
+═══════════════════════════════════════
+[05:49] PLANNING_COMPLETE: 24 stories total
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 05:49 | MODE: plan
+═══════════════════════════════════════
+[05:50] PLANNING_COMPLETE: 24 stories total
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 05:51 | MODE: build
+═══════════════════════════════════════
+[05:52] US-001: Started
+[05:53] US-001: COMPLETE
+[05:53] Learned: Tags are stored as array of objects with id, name, color properties - persisted via existing localStorage mechanism
+[05:53] STORY_COMPLETE: US-001
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 05:55 | MODE: build
+═══════════════════════════════════════
+[05:55] US-002: Started
+[05:56] US-002: COMPLETE
+[05:56] Learned: TagInput uses a radiogroup pattern for color picker with 8 predefined colors; getTagColorStyle helper exported for reuse in other components
+[05:56] STORY_COMPLETE: US-002
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 05:57 | MODE: build
+═══════════════════════════════════════
+[05:57] US-003: Started
+[05:58] US-003: COMPLETE
+[05:58] Learned: Tooltip pattern uses CSS group/group-hover classes with absolute positioning; tags array destructured with default empty array to handle undefined
+[05:58] STORY_COMPLETE: US-003
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:00 | MODE: build
+═══════════════════════════════════════
+[06:00] US-004: Started
+[06:01] US-004: COMPLETE
+[06:01] Learned: Tag filtering uses .some() for ANY-match multi-select behavior; safely handles undefined tags with (todo.tags || [])
+[06:01] STORY_COMPLETE: US-004
+[06:00] STORY_COMPLETE: US-004
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:02 | MODE: build
+═══════════════════════════════════════
+[06:02] US-005: Started
+[06:03] US-005: COMPLETE
+[06:03] Learned: Reused getTagColorStyle from TagInput; aria-pressed for toggle buttons; Clear filters button conditionally rendered when selectedTags.length > 0
+[06:02] STORY_COMPLETE: US-005
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:04 | MODE: build
+═══════════════════════════════════════
+[06:04] US-006: Started
+[06:05] US-006: COMPLETE
+[06:05] Learned: Subtasks use same id/text/completed pattern; addSubtask returns created subtask for immediate use; handled legacy todos without subtasks array using (todo.subtasks || [])
+[06:05] STORY_COMPLETE: US-006
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:06 | MODE: build
+═══════════════════════════════════════
+[06:06] US-007: Started
+[06:08] US-007: COMPLETE
+[06:08] Learned: SubtaskList follows TagInput patterns with onAdd/onToggle/onDelete callbacks; uses group-hover for delete button visibility; strikethrough + muted text for completed state
+[06:08] STORY_COMPLETE: US-007
+[06:09] STORY_COMPLETE: US-007
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:10 | MODE: build
+═══════════════════════════════════════
+[06:10] US-008: Started
+[06:14] US-008: COMPLETE
+[06:14] Learned: Wrapped TodoItem in outer div to support expandable subtask list; progress indicator uses button with aria-expanded for accessibility; callbacks use optional chaining (onToggleSubtask?.) for graceful handling when not provided
+[06:12] STORY_COMPLETE: US-008
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:14 | MODE: build
+═══════════════════════════════════════
+[06:14] US-009: Started
+[06:16] US-009: COMPLETE
+[06:16] Learned: SubtaskList integration uses local state for subtasks that gets passed in onSave; handleAddSubtask generates unique IDs with Date.now() + random suffix to avoid collisions
+[06:15] STORY_COMPLETE: US-009
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:16 | MODE: build
+═══════════════════════════════════════
+[06:16] US-010: Started
+[06:18] US-010: COMPLETE
+[06:18] Learned: useKeyboardShortcuts uses useRef to avoid stale closures with callbacks; getKeyString normalizes key combinations like "ctrl+n"; handles both Ctrl (Windows/Linux) and Meta/Cmd (Mac) as equivalent modifiers
+[06:18] STORY_COMPLETE: US-010
+[06:17] STORY_COMPLETE: US-010
+
+═══════════════════════════════════════
+SESSION: 2026-01-13 06:19 | MODE: build
+═══════════════════════════════════════
+[06:19] US-011: Started
+[06:22] US-011: Implementing keyboard shortcuts in App.jsx
+[06:22] US-011: Updated TodoForm and SearchBar with forwardRef for focus support
+[06:22] US-011: Added selection state to TodoItem for Delete/Backspace support
+[06:22] US-011: Validation passed
+[06:22] US-011: Review cycle 1 - found 1 issue (selection click area), fixing
+[06:22] US-011: Review cycle 2 - clean
+[06:22] US-011: Visual check passed
+[06:22] US-011: COMPLETE
+[06:22] Review: Passed (2 cycles)
+[06:22] Visual: Passed
+[06:22] Learned: TodoForm can directly forward ref to input; SearchBar uses useImperativeHandle to expose focus() method due to internal inputRef; selection state managed at App level with click handlers that exclude interactive elements

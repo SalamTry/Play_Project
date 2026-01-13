@@ -83,8 +83,10 @@ function getPriorityStyle(priority) {
  * @param {Function} props.onToggleSubtask - Callback when subtask checkbox is toggled
  * @param {Function} props.onDeleteSubtask - Callback when subtask delete is clicked
  * @param {Function} props.onAddSubtask - Callback when new subtask is added
+ * @param {boolean} props.isSelected - Whether this todo is selected
+ * @param {Function} props.onSelect - Callback when todo is clicked for selection
  */
-export function TodoItem({ todo, onToggle, onDelete, onEdit, onToggleSubtask, onDeleteSubtask, onAddSubtask }) {
+export function TodoItem({ todo, onToggle, onDelete, onEdit, onToggleSubtask, onDeleteSubtask, onAddSubtask, isSelected, onSelect }) {
   const { id, title, completed, dueDate, priority, tags = [], subtasks = [] } = todo
   const [isSubtasksExpanded, setIsSubtasksExpanded] = useState(false)
 
@@ -102,11 +104,25 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit, onToggleSubtask, on
 
   const showOverdueStyle = dueDate && isOverdue(dueDate) && !completed
 
+  const handleContainerClick = (e) => {
+    // Don't select when clicking on buttons, inputs, or interactive elements
+    const tagName = e.target.tagName.toLowerCase()
+    const isInteractive = tagName === 'button' || tagName === 'input' || e.target.closest('button')
+    if (!isInteractive && onSelect) {
+      onSelect(id)
+    }
+  }
+
   return (
     <div className="space-y-0">
       <div
-        className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white/90 dark:bg-slate-800/90 border rounded-xl shadow-sm hover:shadow-md transition-all ${
-          showOverdueStyle ? 'border-red-300 dark:border-red-700 bg-red-50/90 dark:bg-red-900/20' : 'border-slate-200 dark:border-slate-700'
+        onClick={handleContainerClick}
+        className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white/90 dark:bg-slate-800/90 border rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer ${
+          isSelected
+            ? 'border-indigo-500 dark:border-indigo-400 ring-2 ring-indigo-500/50'
+            : showOverdueStyle
+              ? 'border-red-300 dark:border-red-700 bg-red-50/90 dark:bg-red-900/20'
+              : 'border-slate-200 dark:border-slate-700'
         }`}
       >
       <input

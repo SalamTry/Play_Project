@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 
 /**
  * SearchBar component for searching todos
@@ -7,7 +7,12 @@ import { useState, useEffect, useRef } from 'react'
  * @param {Function} props.onChange - Callback when search value changes (debounced)
  * @param {string} [props.placeholder] - Placeholder text
  */
-export function SearchBar({ value, onChange, placeholder = 'Search todos...' }) {
+export const SearchBar = forwardRef(function SearchBar({ value, onChange, placeholder = 'Search todos...' }, ref) {
+  const inputRef = useRef(null)
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+  }))
   const [inputValue, setInputValue] = useState(value)
   const debounceRef = useRef(null)
 
@@ -62,6 +67,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search todos...' }) 
         </svg>
       </div>
       <input
+        ref={inputRef}
         type="text"
         value={inputValue}
         onChange={handleChange}
@@ -93,4 +99,4 @@ export function SearchBar({ value, onChange, placeholder = 'Search todos...' }) 
       )}
     </div>
   )
-}
+})
