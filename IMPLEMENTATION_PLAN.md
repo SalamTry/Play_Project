@@ -1,94 +1,103 @@
 # Implementation Plan
 
-> Last updated: Task 9 completed - PROJECT COMPLETE
+> Last updated: Project complete - Ralph v2 format applied
 
 ## Status: COMPLETE
 
-## Task List (Priority Order)
+## Progress
+| Metric | Count |
+|--------|-------|
+| Total Tasks | 9 |
+| Completed | 9 |
+| Blocked | 0 |
+| Remaining | 0 |
+
+---
+
+## Tasks
 
 ### Phase 1: Foundation
 
-- [x] **Task 1: Create localStorage utilities**
-  - Create `src/utils/storage.js`
-  - Implement `saveTodos(todos)` function
-  - Implement `loadTodos()` function with error handling
-  - Write tests in `src/utils/storage.test.js`
+- [x] **TASK-001:** Create localStorage utilities
+  - Files: `src/utils/storage.js`
+  - Tests: `src/utils/storage.test.js`
+  - Depends: none
 
-- [x] **Task 2: Create useTodos custom hook**
-  - Create `src/hooks/useTodos.js`
-  - State management for todos array
-  - Implement addTodo, deleteTodo, toggleTodo, updateTodo
-  - Integrate localStorage (save on change, load on mount)
-  - Write tests in `src/hooks/useTodos.test.js`
+- [x] **TASK-002:** Create useTodos custom hook
+  - Files: `src/hooks/useTodos.js`
+  - Tests: `src/hooks/useTodos.test.js`
+  - Depends: TASK-001
 
 ### Phase 2: Components
 
-- [x] **Task 3: Create TodoForm component**
-  - Create `src/components/TodoForm.jsx`
-  - Input for title
-  - Date picker for optional due date
-  - Add button
-  - Form validation (no empty todos)
-  - Write tests in `src/components/TodoForm.test.jsx`
+- [x] **TASK-003:** Create TodoForm component
+  - Files: `src/components/TodoForm.jsx`
+  - Tests: `src/components/TodoForm.test.jsx`
+  - Depends: none
 
-- [x] **Task 4: Create TodoItem component**
-  - Create `src/components/TodoItem.jsx`
-  - Display todo with checkbox, title, due date
-  - Edit and delete buttons
-  - Completion styling (strikethrough)
-  - Overdue styling (red highlight)
-  - "Today" display for today's due dates
-  - Write tests in `src/components/TodoItem.test.jsx`
+- [x] **TASK-004:** Create TodoItem component
+  - Files: `src/components/TodoItem.jsx`
+  - Tests: `src/components/TodoItem.test.jsx`
+  - Depends: none
 
-- [x] **Task 5: Create TodoList component**
-  - Create `src/components/TodoList.jsx`
-  - Render list of TodoItem components
-  - Empty state message
-  - Write tests in `src/components/TodoList.test.jsx`
+- [x] **TASK-005:** Create TodoList component
+  - Files: `src/components/TodoList.jsx`
+  - Tests: `src/components/TodoList.test.jsx`
+  - Depends: TASK-004
 
-- [x] **Task 6: Create EditTodoForm component**
-  - Create `src/components/EditTodoForm.jsx`
-  - Edit mode for title and due date
-  - Save/Cancel functionality
-  - Keyboard shortcuts (Enter to save, Escape to cancel)
-  - Write tests in `src/components/EditTodoForm.test.jsx`
+- [x] **TASK-006:** Create EditTodoForm component
+  - Files: `src/components/EditTodoForm.jsx`
+  - Tests: `src/components/EditTodoForm.test.jsx`
+  - Depends: none
 
 ### Phase 3: Integration
 
-- [x] **Task 7: Integrate components in App.jsx**
-  - Wire up useTodos hook
-  - Connect TodoForm to addTodo
-  - Connect TodoList with todos data
-  - Handle edit/delete/toggle callbacks
-  - Clean up default Vite styling
+- [x] **TASK-007:** Integrate components in App.jsx
+  - Files: `src/App.jsx`
+  - Tests: integration coverage via component tests
+  - Depends: TASK-002, TASK-003, TASK-005, TASK-006
 
 ### Phase 4: Polish
 
-- [x] **Task 8: Add responsive styling**
-  - Mobile-friendly layout
-  - Proper spacing and typography
-  - Hover/focus states
+- [x] **TASK-008:** Add responsive styling
+  - Files: all components
+  - Tests: visual inspection
+  - Depends: TASK-007
 
-- [x] **Task 9: Final testing and cleanup**
-  - Run all tests
-  - Fix any failing tests
-  - Remove unused code
-  - Ensure build passes
+- [x] **TASK-009:** Final testing and cleanup
+  - Files: cleanup unused files
+  - Tests: run full suite
+  - Depends: TASK-008
 
-## Completed Tasks
+---
 
-- **Task 1: Create localStorage utilities** - Added `src/utils/storage.js` with `saveTodos` and `loadTodos` functions, plus comprehensive tests.
-- **Task 2: Create useTodos custom hook** - Added `src/hooks/useTodos.js` with addTodo, deleteTodo, toggleTodo, updateTodo functions and localStorage integration. Includes 21 tests.
-- **Task 3: Create TodoForm component** - Added `src/components/TodoForm.jsx` with title input, date picker, and form validation. Includes 11 tests.
-- **Task 4: Create TodoItem component** - Added `src/components/TodoItem.jsx` with checkbox, title, due date display, edit/delete buttons, completion and overdue styling. Includes 22 tests.
-- **Task 5: Create TodoList component** - Added `src/components/TodoList.jsx` to render a list of TodoItem components with empty state handling. Includes 15 tests.
-- **Task 6: Create EditTodoForm component** - Added `src/components/EditTodoForm.jsx` with pre-filled inputs for editing title and due date, save/cancel functionality, and keyboard shortcuts (Enter to save, Escape to cancel). Includes 17 tests.
-- **Task 7: Integrate components in App.jsx** - Wired up useTodos hook with TodoForm, TodoItem, and EditTodoForm. Added edit state management to switch between view and edit modes. Cleaned up default Vite styling.
-- **Task 8: Add responsive styling** - Added responsive padding/typography with sm: breakpoints, improved mobile layout for forms and buttons, added gradient background and visual hierarchy, enhanced empty state with SVG icon, added hover/focus states with transitions.
-- **Task 9: Final testing and cleanup** - All 95 tests passing, removed unused App.css and react.svg files, updated page title, fixed lint errors (global -> globalThis), build and lint pass.
+## Completed
+
+| Task | Description | Tests |
+|------|-------------|-------|
+| TASK-001 | localStorage utilities | ✓ |
+| TASK-002 | useTodos hook | 21 |
+| TASK-003 | TodoForm component | 11 |
+| TASK-004 | TodoItem component | 22 |
+| TASK-005 | TodoList component | 15 |
+| TASK-006 | EditTodoForm component | 17 |
+| TASK-007 | App integration | ✓ |
+| TASK-008 | Responsive styling | ✓ |
+| TASK-009 | Final cleanup | ✓ |
+
+**Total: 95 tests passing**
+
+---
+
+## Blocked
+
+(none)
+
+---
 
 ## Notes
 
 - Use `crypto.randomUUID()` for generating todo IDs
 - Store dates as ISO strings
 - Tailwind CSS for all styling
+- See ARCHITECTURE.md for patterns

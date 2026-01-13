@@ -1,51 +1,74 @@
-# Build Mode Instructions
+# Build Mode - Single Task Execution
 
-You are in **BUILD MODE**. Your job is to implement one task from the plan, test it, and commit.
+## Your Single Objective
+Complete exactly ONE task from IMPLEMENTATION_PLAN.md.
 
-## Your Workflow
+## Execution Protocol
 
-1. **Read IMPLEMENTATION_PLAN.md** to find the highest priority incomplete task
-2. **Implement ONLY that one task** - nothing else
-3. **Write tests** for the functionality you implemented
-4. **Run tests**: `npm run test:run`
-5. **Run build**: `npm run build`
-6. **If tests and build pass**:
-   - Commit with descriptive message: `feat: description of what you did`
-   - Update IMPLEMENTATION_PLAN.md to mark task as `[x]` complete
-7. **If tests fail**:
-   - Fix the failing tests
-   - Do NOT move on until tests pass
+### Phase 1: Task Selection
+1. READ `ARCHITECTURE.md` (follow these patterns)
+2. READ `IMPLEMENTATION_PLAN.md`
+3. FIND first task matching `- [ ] **TASK-XXX:**`
+4. IF no unchecked tasks:
+   - Change `## Status: IN PROGRESS` to `## Status: COMPLETE`
+   - Output: `ALL_TASKS_COMPLETE`
+   - STOP immediately
 
-## Rules
+### Phase 2: Implementation
+5. READ relevant spec from `specs/`
+6. READ existing related code
+7. IMPLEMENT the task following ARCHITECTURE.md patterns
+8. WRITE tests for new functionality
 
-- ONE task per iteration - do not try to do multiple tasks
-- Tests MUST pass before committing
-- Build MUST succeed before committing
-- Always update the plan after completing a task
-- Use Tailwind CSS for styling
-- Store data in localStorage
+### Phase 3: Validation
+9. RUN tests: `npm run test:run`
+10. RUN build: `npm run build`
+11. IF tests/build FAIL:
+    - Attempt fix (max 3 internal attempts)
+    - IF still failing:
+      - Output: `TASK_BLOCKED: TASK-XXX - <reason>`
+      - STOP immediately
+      - Do NOT commit broken code
 
-## Quality Gates (Backpressure)
+### Phase 4: Completion
+12. COMMIT with message: `feat(TASK-XXX): <description>`
+13. UPDATE `IMPLEMENTATION_PLAN.md`:
+    - Change `- [ ]` to `- [x]` for this task
+14. UPDATE `ARCHITECTURE.md` if you made design decisions
+15. Output: `TASK_COMPLETE: TASK-XXX`
+16. STOP immediately
 
-These must all pass before your commit:
+## Quality Gates (ALL must pass)
+
 ```bash
-npm run test:run   # All tests pass
-npm run build      # Build succeeds
-npm run lint       # No lint errors (if applicable)
+npm run test:run    # All tests pass
+npm run build       # Build succeeds
 ```
 
-## Exit Conditions
+## Commit Message Format
 
-Exit after:
-- Completing one task successfully, OR
-- Encountering a blocker that needs human input, OR
-- All tasks are already complete
+```
+feat(TASK-XXX): short description
 
-Do NOT loop infinitely within a single iteration.
+- Detail of what was implemented
+- Files changed
 
-## When All Tasks Are Complete
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
 
-If ALL tasks in IMPLEMENTATION_PLAN.md are marked `[x]` complete:
-1. Change `## Status: IN PROGRESS` to `## Status: COMPLETE` in IMPLEMENTATION_PLAN.md
-2. Commit with message: `docs: mark project as complete`
-3. Report that the project is finished and exit
+## Forbidden Actions
+- Working on multiple tasks
+- Skipping tests
+- Committing failing code
+- Modifying unrelated files
+- Ignoring ARCHITECTURE.md patterns
+
+## Exit Codes (REQUIRED - output exactly one)
+
+| Situation | Output |
+|-----------|--------|
+| Task completed successfully | `TASK_COMPLETE: TASK-XXX` |
+| Task failed after retries | `TASK_BLOCKED: TASK-XXX - <reason>` |
+| No tasks remaining | `ALL_TASKS_COMPLETE` |
+
+## After outputting exit code, STOP. Do not explain or continue.
