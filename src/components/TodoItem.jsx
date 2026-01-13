@@ -45,6 +45,24 @@ function formatDueDate(dateString) {
 }
 
 /**
+ * Get priority badge styling
+ * @param {'high' | 'medium' | 'low' | null} priority
+ * @returns {{ bg: string, text: string, label: string } | null}
+ */
+function getPriorityStyle(priority) {
+  switch (priority) {
+    case 'high':
+      return { bg: 'bg-rose-100', text: 'text-rose-700', label: 'High' }
+    case 'medium':
+      return { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Medium' }
+    case 'low':
+      return { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Low' }
+    default:
+      return null
+  }
+}
+
+/**
  * Individual todo item component
  * @param {Object} props
  * @param {Object} props.todo - The todo object
@@ -52,12 +70,14 @@ function formatDueDate(dateString) {
  * @param {string} props.todo.title - Todo title
  * @param {boolean} props.todo.completed - Whether todo is completed
  * @param {string|null} props.todo.dueDate - Optional due date as ISO string
+ * @param {'high'|'medium'|'low'|null} props.todo.priority - Optional priority level
  * @param {Function} props.onToggle - Callback when checkbox is toggled
  * @param {Function} props.onDelete - Callback when delete button is clicked
  * @param {Function} props.onEdit - Callback when edit button is clicked
  */
 export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
-  const { id, title, completed, dueDate } = todo
+  const { id, title, completed, dueDate, priority } = todo
+  const priorityStyle = getPriorityStyle(priority)
 
   const showOverdueStyle = dueDate && isOverdue(dueDate) && !completed
 
@@ -76,11 +96,20 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
       />
 
       <div className="flex-1 min-w-0">
-        <p
-          className={`text-sm sm:text-base text-gray-900 break-words ${completed ? 'line-through text-gray-500' : ''}`}
-        >
-          {title}
-        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <p
+            className={`text-sm sm:text-base text-gray-900 break-words ${completed ? 'line-through text-gray-500' : ''}`}
+          >
+            {title}
+          </p>
+          {priorityStyle && (
+            <span
+              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${priorityStyle.bg} ${priorityStyle.text}`}
+            >
+              {priorityStyle.label}
+            </span>
+          )}
+        </div>
         {dueDate && (
           <p
             className={`text-xs sm:text-sm mt-0.5 ${

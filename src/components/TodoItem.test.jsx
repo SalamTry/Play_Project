@@ -207,6 +207,46 @@ describe('TodoItem', () => {
     })
   })
 
+  describe('priority badge display', () => {
+    it('does not show priority badge when priority is null', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      expect(screen.queryByText('High')).not.toBeInTheDocument()
+      expect(screen.queryByText('Medium')).not.toBeInTheDocument()
+      expect(screen.queryByText('Low')).not.toBeInTheDocument()
+    })
+
+    it('shows high priority badge with rose styling', () => {
+      const highPriorityTodo = { ...baseTodo, priority: 'high' }
+      render(<TodoItem {...defaultProps} todo={highPriorityTodo} />)
+
+      const badge = screen.getByText('High')
+      expect(badge).toBeInTheDocument()
+      expect(badge).toHaveClass('bg-rose-100')
+      expect(badge).toHaveClass('text-rose-700')
+    })
+
+    it('shows medium priority badge with amber styling', () => {
+      const mediumPriorityTodo = { ...baseTodo, priority: 'medium' }
+      render(<TodoItem {...defaultProps} todo={mediumPriorityTodo} />)
+
+      const badge = screen.getByText('Medium')
+      expect(badge).toBeInTheDocument()
+      expect(badge).toHaveClass('bg-amber-100')
+      expect(badge).toHaveClass('text-amber-700')
+    })
+
+    it('shows low priority badge with emerald styling', () => {
+      const lowPriorityTodo = { ...baseTodo, priority: 'low' }
+      render(<TodoItem {...defaultProps} todo={lowPriorityTodo} />)
+
+      const badge = screen.getByText('Low')
+      expect(badge).toBeInTheDocument()
+      expect(badge).toHaveClass('bg-emerald-100')
+      expect(badge).toHaveClass('text-emerald-700')
+    })
+  })
+
   describe('accessibility', () => {
     it('has accessible checkbox label', () => {
       render(<TodoItem {...defaultProps} />)
