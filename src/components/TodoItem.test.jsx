@@ -170,7 +170,7 @@ describe('TodoItem', () => {
       // Check for red border class on the container
       const todoContainer = container.firstChild
       expect(todoContainer).toHaveClass('border-red-300')
-      expect(todoContainer).toHaveClass('bg-red-50')
+      expect(todoContainer).toHaveClass('bg-red-50/90')
     })
 
     it('does not apply overdue styling for completed todos with past due dates', () => {

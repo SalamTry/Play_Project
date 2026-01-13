@@ -83,8 +83,8 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
 
   return (
     <div
-      className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white dark:bg-gray-800 border rounded-lg shadow-sm hover:shadow-md transition-shadow ${
-        showOverdueStyle ? 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20' : 'border-gray-200 dark:border-gray-700'
+      className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white/90 dark:bg-slate-800/90 border rounded-xl shadow-sm hover:shadow-md transition-all ${
+        showOverdueStyle ? 'border-red-300 dark:border-red-700 bg-red-50/90 dark:bg-red-900/20' : 'border-slate-200 dark:border-slate-700'
       }`}
     >
       <input
@@ -92,19 +92,19 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
         checked={completed}
         onChange={() => onToggle(id)}
         aria-label={`Mark "${title}" as ${completed ? 'incomplete' : 'complete'}`}
-        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 cursor-pointer shrink-0 dark:bg-gray-700 transition-all hover:scale-110 active:scale-95"
+        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 cursor-pointer shrink-0 dark:bg-slate-700 transition-all hover:scale-110 active:scale-95"
       />
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <p
-            className={`text-sm sm:text-base text-gray-900 dark:text-gray-100 break-words ${completed ? 'line-through text-gray-500 dark:text-gray-500' : ''}`}
+            className={`text-sm sm:text-base text-slate-900 dark:text-slate-100 break-words ${completed ? 'line-through text-slate-400 dark:text-slate-500' : ''}`}
           >
             {title}
           </p>
           {priorityStyle && (
             <span
-              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${priorityStyle.bg} ${priorityStyle.text}`}
+              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${priorityStyle.bg} ${priorityStyle.text}`}
             >
               {priorityStyle.label}
             </span>
@@ -114,10 +114,10 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           <p
             className={`text-xs sm:text-sm mt-0.5 ${
               showOverdueStyle
-                ? 'text-red-600 dark:text-red-400 font-medium'
+                ? 'text-red-600 dark:text-red-400 font-semibold'
                 : isToday(dueDate)
-                ? 'text-blue-600 dark:text-blue-400 font-medium'
-                : 'text-gray-500 dark:text-gray-400'
+                ? 'text-indigo-600 dark:text-indigo-400 font-semibold'
+                : 'text-slate-500 dark:text-slate-400'
             }`}
           >
             {formatDueDate(dueDate)}
@@ -130,7 +130,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           type="button"
           onClick={() => onEdit(id)}
           aria-label={`Edit "${title}"`}
-          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-800 rounded transition-all hover:scale-105 active:scale-95"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-800 rounded-lg transition-all hover:scale-105 active:scale-95"
         >
           Edit
         </button>
@@ -138,7 +138,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           type="button"
           onClick={() => onDelete(id)}
           aria-label={`Delete "${title}"`}
-          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-800 rounded transition-all hover:scale-105 active:scale-95"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-800 rounded-lg transition-all hover:scale-105 active:scale-95"
         >
           Delete
         </button>

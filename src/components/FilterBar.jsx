@@ -20,7 +20,7 @@ export function FilterBar({
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-700 p-1 rounded-lg" role="tablist" aria-label="Filter todos by status">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-700 p-1 rounded-lg" role="tablist" aria-label="Filter todos by status">
         {statusFilters.map(({ value, label }) => (
           <button
             key={value}
@@ -28,10 +28,10 @@ export function FilterBar({
             role="tab"
             aria-selected={filter === value}
             onClick={() => onFilterChange(value)}
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-800 hover:scale-105 active:scale-95 ${
+            className={`px-3 py-1.5 text-sm font-semibold rounded-lg transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-800 hover:scale-105 active:scale-95 ${
               filter === value
-                ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-600'
+                ? 'bg-white dark:bg-slate-600 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-600'
             }`}
           >
             {label}
@@ -40,14 +40,14 @@ export function FilterBar({
       </div>
 
       <div className="flex items-center gap-2">
-        <label htmlFor="priority-filter" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label htmlFor="priority-filter" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
           Priority:
         </label>
         <select
           id="priority-filter"
           value={priorityFilter}
           onChange={(e) => onPriorityFilterChange(e.target.value)}
-          className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-all bg-white dark:bg-gray-700 dark:text-white"
+          className="px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-500 transition-all bg-white dark:bg-slate-700 dark:text-white"
         >
           <option value="all">All</option>
           <option value="high">High</option>
