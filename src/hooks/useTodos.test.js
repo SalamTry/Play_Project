@@ -51,6 +51,7 @@ describe('useTodos', () => {
         title: 'New todo',
         completed: false,
         dueDate: null,
+        priority: null,
       })
       expect(result.current.todos[0].id).toBeDefined()
       expect(result.current.todos[0].createdAt).toBeDefined()
@@ -65,6 +66,31 @@ describe('useTodos', () => {
       })
 
       expect(result.current.todos[0].dueDate).toBe(dueDate)
+    })
+
+    it('adds a todo with priority', () => {
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addTodo('High priority todo', null, 'high')
+      })
+
+      expect(result.current.todos[0].priority).toBe('high')
+    })
+
+    it('adds a todo with due date and priority', () => {
+      const { result } = renderHook(() => useTodos())
+      const dueDate = '2024-12-31T00:00:00.000Z'
+
+      act(() => {
+        result.current.addTodo('Full todo', dueDate, 'medium')
+      })
+
+      expect(result.current.todos[0]).toMatchObject({
+        title: 'Full todo',
+        dueDate,
+        priority: 'medium',
+      })
     })
 
     it('trims whitespace from title', () => {
@@ -247,9 +273,59 @@ describe('useTodos', () => {
       expect(result.current.todos[0].dueDate).toBeNull()
     })
 
+    it('updates the priority of a todo', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, priority: null },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', { priority: 'high' })
+      })
+
+      expect(result.current.todos[0].priority).toBe('high')
+    })
+
+    it('clears priority when set to null', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, priority: 'high' },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', { priority: null })
+      })
+
+      expect(result.current.todos[0].priority).toBeNull()
+    })
+
+    it('updates title, due date, and priority together', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Old', completed: false, dueDate: null, priority: null },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', {
+          title: 'New',
+          dueDate: '2024-12-31T00:00:00.000Z',
+          priority: 'low',
+        })
+      })
+
+      expect(result.current.todos[0]).toMatchObject({
+        title: 'New',
+        dueDate: '2024-12-31T00:00:00.000Z',
+        priority: 'low',
+      })
+    })
+
     it('preserves other fields when updating', () => {
       loadTodos.mockReturnValue([
-        { id: '1', title: 'Todo', completed: true, dueDate: '2024-12-31', createdAt: '2024-01-01' },
+        { id: '1', title: 'Todo', completed: true, dueDate: '2024-12-31', priority: 'high', createdAt: '2024-01-01' },
       ])
 
       const { result } = renderHook(() => useTodos())
@@ -262,6 +338,7 @@ describe('useTodos', () => {
         id: '1',
         completed: true,
         dueDate: '2024-12-31',
+        priority: 'high',
         createdAt: '2024-01-01',
       })
     })
