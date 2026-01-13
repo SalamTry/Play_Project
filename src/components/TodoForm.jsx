@@ -3,11 +3,12 @@ import { useState } from 'react'
 /**
  * Form component for adding new todos
  * @param {Object} props
- * @param {Function} props.onAddTodo - Callback when a todo is added (title, dueDate)
+ * @param {Function} props.onAddTodo - Callback when a todo is added (title, dueDate, priority)
  */
 export function TodoForm({ onAddTodo }) {
   const [title, setTitle] = useState('')
   const [dueDate, setDueDate] = useState('')
+  const [priority, setPriority] = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -19,12 +20,15 @@ export function TodoForm({ onAddTodo }) {
 
     // Convert date input value to ISO string or null
     const dueDateValue = dueDate ? new Date(dueDate).toISOString() : null
+    // Convert priority to null if empty string
+    const priorityValue = priority || null
 
-    onAddTodo(trimmedTitle, dueDateValue)
+    onAddTodo(trimmedTitle, dueDateValue, priorityValue)
 
     // Reset form
     setTitle('')
     setDueDate('')
+    setPriority('')
   }
 
   return (
@@ -54,6 +58,23 @@ export function TodoForm({ onAddTodo }) {
           onChange={(e) => setDueDate(e.target.value)}
           className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
         />
+      </div>
+
+      <div className="sm:w-32">
+        <label htmlFor="todo-priority" className="block text-sm font-medium text-gray-700 mb-1">
+          Priority
+        </label>
+        <select
+          id="todo-priority"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white"
+        >
+          <option value="">None</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
       </div>
 
       <button
