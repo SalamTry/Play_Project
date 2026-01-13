@@ -59,6 +59,13 @@ while true; do
         fi
     fi
 
+    # Check for completion marker (auto-stop)
+    if grep -q "^## Status: COMPLETE" IMPLEMENTATION_PLAN.md 2>/dev/null; then
+        echo ""
+        echo "🎉 ALL TASKS COMPLETE! Auto-stopping."
+        break
+    fi
+
     # Check iteration limit
     if [ "$ITERATION" -ge "$MAX_ITERATIONS" ]; then
         echo ""

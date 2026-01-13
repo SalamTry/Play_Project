@@ -38,6 +38,14 @@ npm run lint       # No lint errors (if applicable)
 
 Exit after:
 - Completing one task successfully, OR
-- Encountering a blocker that needs human input
+- Encountering a blocker that needs human input, OR
+- All tasks are already complete
 
 Do NOT loop infinitely within a single iteration.
+
+## When All Tasks Are Complete
+
+If ALL tasks in IMPLEMENTATION_PLAN.md are marked `[x]` complete:
+1. Change `## Status: IN PROGRESS` to `## Status: COMPLETE` in IMPLEMENTATION_PLAN.md
+2. Commit with message: `docs: mark project as complete`
+3. Report that the project is finished and exit
