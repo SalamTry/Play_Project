@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { getTagColorStyle } from './TagInput'
+import { SubtaskList } from './SubtaskList'
 
 /**
  * Helper function to check if a date is today
@@ -74,12 +76,22 @@ function getPriorityStyle(priority) {
  * @param {string|null} props.todo.dueDate - Optional due date as ISO string
  * @param {'high'|'medium'|'low'|null} props.todo.priority - Optional priority level
  * @param {Array} props.todo.tags - Optional array of tags
+ * @param {Array} props.todo.subtasks - Optional array of subtasks
  * @param {Function} props.onToggle - Callback when checkbox is toggled
  * @param {Function} props.onDelete - Callback when delete button is clicked
  * @param {Function} props.onEdit - Callback when edit button is clicked
+ * @param {Function} props.onToggleSubtask - Callback when subtask checkbox is toggled
+ * @param {Function} props.onDeleteSubtask - Callback when subtask delete is clicked
+ * @param {Function} props.onAddSubtask - Callback when new subtask is added
  */
-export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
-  const { id, title, completed, dueDate, priority, tags = [] } = todo
+export function TodoItem({ todo, onToggle, onDelete, onEdit, onToggleSubtask, onDeleteSubtask, onAddSubtask }) {
+  const { id, title, completed, dueDate, priority, tags = [], subtasks = [] } = todo
+  const [isSubtasksExpanded, setIsSubtasksExpanded] = useState(false)
+
+  // Calculate subtask progress
+  const totalSubtasks = subtasks.length
+  const completedSubtasks = subtasks.filter((st) => st.completed).length
+  const progressPercent = totalSubtasks > 0 ? Math.round((completedSubtasks / totalSubtasks) * 100) : 0
   const priorityStyle = getPriorityStyle(priority)
 
   // Split tags into visible and overflow
@@ -91,11 +103,12 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
   const showOverdueStyle = dueDate && isOverdue(dueDate) && !completed
 
   return (
-    <div
-      className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white/90 dark:bg-slate-800/90 border rounded-xl shadow-sm hover:shadow-md transition-all ${
-        showOverdueStyle ? 'border-red-300 dark:border-red-700 bg-red-50/90 dark:bg-red-900/20' : 'border-slate-200 dark:border-slate-700'
-      }`}
-    >
+    <div className="space-y-0">
+      <div
+        className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white/90 dark:bg-slate-800/90 border rounded-xl shadow-sm hover:shadow-md transition-all ${
+          showOverdueStyle ? 'border-red-300 dark:border-red-700 bg-red-50/90 dark:bg-red-900/20' : 'border-slate-200 dark:border-slate-700'
+        }`}
+      >
       <input
         type="checkbox"
         checked={completed}
@@ -161,6 +174,39 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
             )}
           </div>
         )}
+        {/* Subtask progress indicator - hidden if no subtasks */}
+        {totalSubtasks > 0 && (
+          <button
+            type="button"
+            onClick={() => setIsSubtasksExpanded(!isSubtasksExpanded)}
+            className="flex items-center gap-2 mt-1.5 group/progress cursor-pointer"
+            aria-expanded={isSubtasksExpanded}
+            aria-label={`${completedSubtasks} of ${totalSubtasks} subtasks completed. Click to ${isSubtasksExpanded ? 'collapse' : 'expand'} subtasks`}
+          >
+            {/* Progress text */}
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              {completedSubtasks}/{totalSubtasks}
+            </span>
+            {/* Progress bar */}
+            <div className="flex-1 h-1.5 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden min-w-[60px] max-w-[100px]">
+              <div
+                className="h-full bg-gradient-to-r from-indigo-500 to-violet-500 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+                aria-hidden="true"
+              />
+            </div>
+            {/* Expand/collapse indicator */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className={`w-4 h-4 text-slate-400 dark:text-slate-500 transition-transform duration-200 ${isSubtasksExpanded ? 'rotate-180' : ''}`}
+              aria-hidden="true"
+            >
+              <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+            </svg>
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 shrink-0">
@@ -181,6 +227,18 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           Delete
         </button>
       </div>
+    </div>
+      {/* Expanded subtask list */}
+      {isSubtasksExpanded && totalSubtasks > 0 && (
+        <div className="mt-2 ml-8 border-l-2 border-slate-200 dark:border-slate-600 pl-4">
+          <SubtaskList
+            subtasks={subtasks}
+            onToggle={(subtaskId) => onToggleSubtask?.(id, subtaskId)}
+            onDelete={(subtaskId) => onDeleteSubtask?.(id, subtaskId)}
+            onAdd={(text) => onAddSubtask?.(id, text)}
+          />
+        </div>
+      )}
     </div>
   )
 }

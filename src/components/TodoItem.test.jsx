@@ -167,8 +167,8 @@ describe('TodoItem', () => {
 
       const { container } = render(<TodoItem {...defaultProps} todo={overdueTodo} />)
 
-      // Check for red border class on the container
-      const todoContainer = container.firstChild
+      // Check for red border class on the main todo container (inside the wrapper)
+      const todoContainer = container.firstChild.firstChild
       expect(todoContainer).toHaveClass('border-red-300')
       expect(todoContainer).toHaveClass('bg-red-50/90')
     })
@@ -180,7 +180,7 @@ describe('TodoItem', () => {
 
       const { container } = render(<TodoItem {...defaultProps} todo={completedOverdueTodo} />)
 
-      const todoContainer = container.firstChild
+      const todoContainer = container.firstChild.firstChild
       expect(todoContainer).not.toHaveClass('border-red-300')
       expect(todoContainer).not.toHaveClass('bg-red-50')
     })
@@ -191,7 +191,7 @@ describe('TodoItem', () => {
 
       const { container } = render(<TodoItem {...defaultProps} todo={todayTodo} />)
 
-      const todoContainer = container.firstChild
+      const todoContainer = container.firstChild.firstChild
       expect(todoContainer).not.toHaveClass('border-red-300')
     })
 
@@ -202,7 +202,7 @@ describe('TodoItem', () => {
 
       const { container } = render(<TodoItem {...defaultProps} todo={futureTodo} />)
 
-      const todoContainer = container.firstChild
+      const todoContainer = container.firstChild.firstChild
       expect(todoContainer).not.toHaveClass('border-red-300')
     })
   })
@@ -366,6 +366,159 @@ describe('TodoItem', () => {
       const tooltip = screen.getByRole('tooltip')
       expect(tooltip).toBeInTheDocument()
       expect(tooltip).toHaveTextContent('Tag 4')
+    })
+  })
+
+  describe('subtask progress display', () => {
+    const createSubtasks = (count, completedCount = 0) =>
+      Array.from({ length: count }, (_, i) => ({
+        id: `subtask-${i + 1}`,
+        text: `Subtask ${i + 1}`,
+        completed: i < completedCount,
+      }))
+
+    it('does not show progress indicator when there are no subtasks', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      // Should not have any progress text
+      expect(screen.queryByText(/\/\d+/)).not.toBeInTheDocument()
+    })
+
+    it('shows progress indicator in X/Y format when subtasks exist', () => {
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(3, 1),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithSubtasks} />)
+
+      expect(screen.getByText('1/3')).toBeInTheDocument()
+    })
+
+    it('shows progress bar visual when subtasks exist', () => {
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(4, 2),
+      }
+      const { container } = render(<TodoItem {...defaultProps} todo={todoWithSubtasks} />)
+
+      // Check for progress bar container
+      const progressBar = container.querySelector('[style*="width"]')
+      expect(progressBar).toBeInTheDocument()
+      expect(progressBar).toHaveStyle({ width: '50%' })
+    })
+
+    it('clicking progress indicator expands subtask list', async () => {
+      const user = userEvent.setup()
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(2, 0),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithSubtasks} />)
+
+      // Initially subtasks should not be visible
+      expect(screen.queryByLabelText('Subtasks')).not.toBeInTheDocument()
+
+      // Click the progress indicator
+      const progressButton = screen.getByRole('button', { name: /subtasks completed/i })
+      await user.click(progressButton)
+
+      // Now subtasks should be visible
+      expect(screen.getByLabelText('Subtasks')).toBeInTheDocument()
+      expect(screen.getByText('Subtask 1')).toBeInTheDocument()
+      expect(screen.getByText('Subtask 2')).toBeInTheDocument()
+    })
+
+    it('clicking progress indicator again collapses subtask list', async () => {
+      const user = userEvent.setup()
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(2, 0),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithSubtasks} />)
+
+      const progressButton = screen.getByRole('button', { name: /subtasks completed/i })
+
+      // Expand
+      await user.click(progressButton)
+      expect(screen.getByLabelText('Subtasks')).toBeInTheDocument()
+
+      // Collapse
+      await user.click(progressButton)
+      expect(screen.queryByLabelText('Subtasks')).not.toBeInTheDocument()
+    })
+
+    it('progress indicator has proper aria attributes', () => {
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(3, 2),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithSubtasks} />)
+
+      const progressButton = screen.getByRole('button', { name: /2 of 3 subtasks completed/i })
+      expect(progressButton).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    it('calls onToggleSubtask when subtask checkbox is clicked', async () => {
+      const user = userEvent.setup()
+      const onToggleSubtask = vi.fn()
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(1, 0),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithSubtasks} onToggleSubtask={onToggleSubtask} />)
+
+      // Expand subtasks first
+      const progressButton = screen.getByRole('button', { name: /subtasks completed/i })
+      await user.click(progressButton)
+
+      // Click subtask checkbox
+      const subtaskCheckbox = screen.getByLabelText(/Mark "Subtask 1"/i)
+      await user.click(subtaskCheckbox)
+
+      expect(onToggleSubtask).toHaveBeenCalledWith('test-id-123', 'subtask-1')
+    })
+
+    it('calls onDeleteSubtask when subtask delete is clicked', async () => {
+      const user = userEvent.setup()
+      const onDeleteSubtask = vi.fn()
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(1, 0),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithSubtasks} onDeleteSubtask={onDeleteSubtask} />)
+
+      // Expand subtasks first
+      const progressButton = screen.getByRole('button', { name: /subtasks completed/i })
+      await user.click(progressButton)
+
+      // Click delete button
+      const deleteButton = screen.getByLabelText(/Delete "Subtask 1"/i)
+      await user.click(deleteButton)
+
+      expect(onDeleteSubtask).toHaveBeenCalledWith('test-id-123', 'subtask-1')
+    })
+
+    it('calls onAddSubtask when new subtask is added', async () => {
+      const user = userEvent.setup()
+      const onAddSubtask = vi.fn()
+      const todoWithSubtasks = {
+        ...baseTodo,
+        subtasks: createSubtasks(1, 0),
+      }
+      render(<TodoItem {...defaultProps} todo={todoWithSubtasks} onAddSubtask={onAddSubtask} />)
+
+      // Expand subtasks first
+      const progressButton = screen.getByRole('button', { name: /subtasks completed/i })
+      await user.click(progressButton)
+
+      // Add a new subtask
+      const input = screen.getByLabelText('New subtask')
+      await user.type(input, 'New subtask text')
+
+      const addButton = screen.getByLabelText('Add subtask')
+      await user.click(addButton)
+
+      expect(onAddSubtask).toHaveBeenCalledWith('test-id-123', 'New subtask text')
     })
   })
 })
