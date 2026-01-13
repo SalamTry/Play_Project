@@ -19,9 +19,10 @@ export function useTodos() {
    * @param {string|null} dueDate - Optional due date as ISO string
    * @param {string|null} priority - Optional priority ('high' | 'medium' | 'low' | null)
    * @param {Array|null} tags - Optional array of tag objects with id, name, color
+   * @param {Array|null} subtasks - Optional array of subtask objects with id, text, completed
    * @returns {Object} The created todo
    */
-  function addTodo(title, dueDate = null, priority = null, tags = []) {
+  function addTodo(title, dueDate = null, priority = null, tags = [], subtasks = []) {
     const newTodo = {
       id: crypto.randomUUID(),
       title: title.trim(),
@@ -29,6 +30,7 @@ export function useTodos() {
       dueDate,
       priority,
       tags: tags || [],
+      subtasks: subtasks || [],
       createdAt: new Date().toISOString(),
     }
     setTodos((prev) => [...prev, newTodo])
@@ -56,9 +58,9 @@ export function useTodos() {
   }
 
   /**
-   * Update a todo's title, due date, priority, and/or tags
+   * Update a todo's title, due date, priority, tags, and/or subtasks
    * @param {string} id - The todo ID to update
-   * @param {Object} updates - Object with title, dueDate, priority, and/or tags
+   * @param {Object} updates - Object with title, dueDate, priority, tags, and/or subtasks
    */
   function updateTodo(id, updates) {
     setTodos((prev) =>
@@ -70,9 +72,85 @@ export function useTodos() {
               ...(updates.dueDate !== undefined && { dueDate: updates.dueDate }),
               ...(updates.priority !== undefined && { priority: updates.priority }),
               ...(updates.tags !== undefined && { tags: updates.tags }),
+              ...(updates.subtasks !== undefined && { subtasks: updates.subtasks }),
             }
           : todo
       )
+    )
+  }
+
+  /**
+   * Add a subtask to a todo
+   * @param {string} todoId - The todo ID to add subtask to
+   * @param {string} text - The subtask text
+   * @returns {Object|null} The created subtask or null if todo not found
+   */
+  function addSubtask(todoId, text) {
+    const newSubtask = {
+      id: crypto.randomUUID(),
+      text: text.trim(),
+      completed: false,
+    }
+    let created = null
+    setTodos((prev) =>
+      prev.map((todo) => {
+        if (todo.id === todoId) {
+          created = newSubtask
+          return {
+            ...todo,
+            subtasks: [...(todo.subtasks || []), newSubtask],
+          }
+        }
+        return todo
+      })
+    )
+    return created
+  }
+
+  /**
+   * Update a subtask
+   * @param {string} todoId - The todo ID containing the subtask
+   * @param {string} subtaskId - The subtask ID to update
+   * @param {Object} updates - Object with text and/or completed
+   */
+  function updateSubtask(todoId, subtaskId, updates) {
+    setTodos((prev) =>
+      prev.map((todo) => {
+        if (todo.id === todoId) {
+          return {
+            ...todo,
+            subtasks: (todo.subtasks || []).map((subtask) =>
+              subtask.id === subtaskId
+                ? {
+                    ...subtask,
+                    ...(updates.text !== undefined && { text: updates.text.trim() }),
+                    ...(updates.completed !== undefined && { completed: updates.completed }),
+                  }
+                : subtask
+            ),
+          }
+        }
+        return todo
+      })
+    )
+  }
+
+  /**
+   * Delete a subtask from a todo
+   * @param {string} todoId - The todo ID containing the subtask
+   * @param {string} subtaskId - The subtask ID to delete
+   */
+  function deleteSubtask(todoId, subtaskId) {
+    setTodos((prev) =>
+      prev.map((todo) => {
+        if (todo.id === todoId) {
+          return {
+            ...todo,
+            subtasks: (todo.subtasks || []).filter((subtask) => subtask.id !== subtaskId),
+          }
+        }
+        return todo
+      })
     )
   }
 
@@ -82,5 +160,8 @@ export function useTodos() {
     deleteTodo,
     toggleTodo,
     updateTodo,
+    addSubtask,
+    updateSubtask,
+    deleteSubtask,
   }
 }

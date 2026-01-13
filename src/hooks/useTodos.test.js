@@ -474,6 +474,348 @@ describe('useTodos', () => {
     })
   })
 
+  describe('addTodo with subtasks', () => {
+    it('adds a todo with subtasks', () => {
+      const { result } = renderHook(() => useTodos())
+      const subtasks = [
+        { id: 'st-1', text: 'Subtask 1', completed: false },
+        { id: 'st-2', text: 'Subtask 2', completed: true },
+      ]
+
+      act(() => {
+        result.current.addTodo('Todo with subtasks', null, null, [], subtasks)
+      })
+
+      expect(result.current.todos[0].subtasks).toEqual(subtasks)
+    })
+
+    it('defaults subtasks to empty array when not provided', () => {
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addTodo('Todo without subtasks')
+      })
+
+      expect(result.current.todos[0].subtasks).toEqual([])
+    })
+
+    it('adds a todo with all fields including subtasks', () => {
+      const { result } = renderHook(() => useTodos())
+      const dueDate = '2024-12-31T00:00:00.000Z'
+      const tags = [{ id: 'tag-1', name: 'Work', color: '#ff0000' }]
+      const subtasks = [{ id: 'st-1', text: 'Step 1', completed: false }]
+
+      act(() => {
+        result.current.addTodo('Full todo', dueDate, 'high', tags, subtasks)
+      })
+
+      expect(result.current.todos[0]).toMatchObject({
+        title: 'Full todo',
+        dueDate,
+        priority: 'high',
+        tags,
+        subtasks,
+      })
+    })
+  })
+
+  describe('addSubtask', () => {
+    it('adds a subtask to a todo', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, subtasks: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addSubtask('1', 'New subtask')
+      })
+
+      expect(result.current.todos[0].subtasks).toHaveLength(1)
+      expect(result.current.todos[0].subtasks[0]).toMatchObject({
+        text: 'New subtask',
+        completed: false,
+      })
+      expect(result.current.todos[0].subtasks[0].id).toBeDefined()
+    })
+
+    it('returns the created subtask', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, subtasks: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      let createdSubtask
+
+      act(() => {
+        createdSubtask = result.current.addSubtask('1', 'New subtask')
+      })
+
+      expect(createdSubtask).toMatchObject({
+        text: 'New subtask',
+        completed: false,
+      })
+      expect(createdSubtask.id).toBeDefined()
+    })
+
+    it('trims whitespace from subtask text', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, subtasks: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addSubtask('1', '  Trimmed subtask  ')
+      })
+
+      expect(result.current.todos[0].subtasks[0].text).toBe('Trimmed subtask')
+    })
+
+    it('adds multiple subtasks to a todo', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, subtasks: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addSubtask('1', 'First subtask')
+        result.current.addSubtask('1', 'Second subtask')
+      })
+
+      expect(result.current.todos[0].subtasks).toHaveLength(2)
+      expect(result.current.todos[0].subtasks[0].text).toBe('First subtask')
+      expect(result.current.todos[0].subtasks[1].text).toBe('Second subtask')
+    })
+
+    it('handles adding subtask to todo without subtasks array', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.addSubtask('1', 'New subtask')
+      })
+
+      expect(result.current.todos[0].subtasks).toHaveLength(1)
+    })
+  })
+
+  describe('updateSubtask', () => {
+    it('updates the text of a subtask', () => {
+      loadTodos.mockReturnValue([
+        {
+          id: '1',
+          title: 'Todo',
+          completed: false,
+          subtasks: [{ id: 'st-1', text: 'Old text', completed: false }],
+        },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateSubtask('1', 'st-1', { text: 'New text' })
+      })
+
+      expect(result.current.todos[0].subtasks[0].text).toBe('New text')
+    })
+
+    it('updates the completed status of a subtask', () => {
+      loadTodos.mockReturnValue([
+        {
+          id: '1',
+          title: 'Todo',
+          completed: false,
+          subtasks: [{ id: 'st-1', text: 'Subtask', completed: false }],
+        },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateSubtask('1', 'st-1', { completed: true })
+      })
+
+      expect(result.current.todos[0].subtasks[0].completed).toBe(true)
+    })
+
+    it('updates both text and completed status', () => {
+      loadTodos.mockReturnValue([
+        {
+          id: '1',
+          title: 'Todo',
+          completed: false,
+          subtasks: [{ id: 'st-1', text: 'Old', completed: false }],
+        },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateSubtask('1', 'st-1', { text: 'New', completed: true })
+      })
+
+      expect(result.current.todos[0].subtasks[0]).toMatchObject({
+        text: 'New',
+        completed: true,
+      })
+    })
+
+    it('trims whitespace from updated text', () => {
+      loadTodos.mockReturnValue([
+        {
+          id: '1',
+          title: 'Todo',
+          completed: false,
+          subtasks: [{ id: 'st-1', text: 'Old', completed: false }],
+        },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateSubtask('1', 'st-1', { text: '  Trimmed  ' })
+      })
+
+      expect(result.current.todos[0].subtasks[0].text).toBe('Trimmed')
+    })
+
+    it('only updates the specified subtask', () => {
+      loadTodos.mockReturnValue([
+        {
+          id: '1',
+          title: 'Todo',
+          completed: false,
+          subtasks: [
+            { id: 'st-1', text: 'First', completed: false },
+            { id: 'st-2', text: 'Second', completed: false },
+          ],
+        },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateSubtask('1', 'st-1', { completed: true })
+      })
+
+      expect(result.current.todos[0].subtasks[0].completed).toBe(true)
+      expect(result.current.todos[0].subtasks[1].completed).toBe(false)
+    })
+  })
+
+  describe('deleteSubtask', () => {
+    it('removes a subtask by ID', () => {
+      loadTodos.mockReturnValue([
+        {
+          id: '1',
+          title: 'Todo',
+          completed: false,
+          subtasks: [
+            { id: 'st-1', text: 'First', completed: false },
+            { id: 'st-2', text: 'Second', completed: false },
+          ],
+        },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.deleteSubtask('1', 'st-1')
+      })
+
+      expect(result.current.todos[0].subtasks).toHaveLength(1)
+      expect(result.current.todos[0].subtasks[0].id).toBe('st-2')
+    })
+
+    it('does nothing if subtask ID not found', () => {
+      loadTodos.mockReturnValue([
+        {
+          id: '1',
+          title: 'Todo',
+          completed: false,
+          subtasks: [{ id: 'st-1', text: 'Subtask', completed: false }],
+        },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.deleteSubtask('1', 'nonexistent')
+      })
+
+      expect(result.current.todos[0].subtasks).toHaveLength(1)
+    })
+
+    it('handles deleting from todo without subtasks array', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.deleteSubtask('1', 'st-1')
+      })
+
+      expect(result.current.todos[0].subtasks).toEqual([])
+    })
+  })
+
+  describe('updateTodo with subtasks', () => {
+    it('updates the subtasks of a todo', () => {
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, subtasks: [] },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+      const newSubtasks = [
+        { id: 'st-1', text: 'New subtask', completed: false },
+      ]
+
+      act(() => {
+        result.current.updateTodo('1', { subtasks: newSubtasks })
+      })
+
+      expect(result.current.todos[0].subtasks).toEqual(newSubtasks)
+    })
+
+    it('replaces existing subtasks', () => {
+      const oldSubtasks = [{ id: 'st-1', text: 'Old', completed: false }]
+      const newSubtasks = [{ id: 'st-2', text: 'New', completed: true }]
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, subtasks: oldSubtasks },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', { subtasks: newSubtasks })
+      })
+
+      expect(result.current.todos[0].subtasks).toEqual(newSubtasks)
+    })
+
+    it('preserves subtasks when updating other fields', () => {
+      const subtasks = [{ id: 'st-1', text: 'Subtask', completed: false }]
+      loadTodos.mockReturnValue([
+        { id: '1', title: 'Todo', completed: false, subtasks },
+      ])
+
+      const { result } = renderHook(() => useTodos())
+
+      act(() => {
+        result.current.updateTodo('1', { title: 'Updated' })
+      })
+
+      expect(result.current.todos[0].subtasks).toEqual(subtasks)
+    })
+  })
+
   describe('persistence', () => {
     it('saves todos to storage when todos change', async () => {
       const { result } = renderHook(() => useTodos())
