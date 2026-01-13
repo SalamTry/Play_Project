@@ -1,6 +1,6 @@
 # Implementation Plan
 
-> Last updated: Task 5 completed
+> Last updated: Task 6 completed
 
 ## Status: IN PROGRESS
 
@@ -46,7 +46,7 @@
   - Empty state message
   - Write tests in `src/components/TodoList.test.jsx`
 
-- [ ] **Task 6: Create EditTodoForm component**
+- [x] **Task 6: Create EditTodoForm component**
   - Create `src/components/EditTodoForm.jsx`
   - Edit mode for title and due date
   - Save/Cancel functionality
@@ -82,6 +82,7 @@
 - **Task 3: Create TodoForm component** - Added `src/components/TodoForm.jsx` with title input, date picker, and form validation. Includes 11 tests.
 - **Task 4: Create TodoItem component** - Added `src/components/TodoItem.jsx` with checkbox, title, due date display, edit/delete buttons, completion and overdue styling. Includes 22 tests.
 - **Task 5: Create TodoList component** - Added `src/components/TodoList.jsx` to render a list of TodoItem components with empty state handling. Includes 15 tests.
+- **Task 6: Create EditTodoForm component** - Added `src/components/EditTodoForm.jsx` with pre-filled inputs for editing title and due date, save/cancel functionality, and keyboard shortcuts (Enter to save, Escape to cancel). Includes 17 tests.
 
 ## Notes
 
