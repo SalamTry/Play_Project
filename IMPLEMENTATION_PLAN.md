@@ -8,9 +8,9 @@
 | Metric | Count |
 |--------|-------|
 | Total Tasks | 17 |
-| Completed | 15 |
+| Completed | 16 |
 | Blocked | 0 |
-| Remaining | 2 |
+| Remaining | 1 |
 
 ---
 
@@ -114,7 +114,7 @@
   - Depends: TASK-013
   - **MUST:** Add hover:scale, active:scale effects to buttons. Add focus-visible rings. Add transition-all to interactive elements.
 
-- [ ] **TASK-016:** Visual polish and color scheme refinement
+- [x] **TASK-016:** Visual polish and color scheme refinement
   - Files: `tailwind.config.js`, all components
   - Tests: visual inspection
   - Depends: TASK-012, TASK-015
