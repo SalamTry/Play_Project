@@ -43,7 +43,7 @@ export function TodoForm({ onAddTodo }) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="What needs to be done?"
-          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white dark:bg-gray-700 dark:text-white"
+          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-all bg-white dark:bg-gray-700 dark:text-white"
         />
       </div>
 
@@ -56,7 +56,7 @@ export function TodoForm({ onAddTodo }) {
           id="todo-due-date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white dark:bg-gray-700 dark:text-white"
+          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-all bg-white dark:bg-gray-700 dark:text-white"
         />
       </div>
 
@@ -68,7 +68,7 @@ export function TodoForm({ onAddTodo }) {
           id="todo-priority"
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white dark:bg-gray-700 dark:text-white"
+          className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-all bg-white dark:bg-gray-700 dark:text-white"
         >
           <option value="">None</option>
           <option value="high">High</option>
@@ -79,7 +79,7 @@ export function TodoForm({ onAddTodo }) {
 
       <button
         type="submit"
-        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white font-medium rounded-md shadow-sm hover:bg-blue-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 active:bg-blue-800 transition-all"
+        className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white font-medium rounded-md shadow-sm hover:bg-blue-700 hover:shadow hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 active:bg-blue-800 active:scale-95 transition-all"
       >
         Add
       </button>

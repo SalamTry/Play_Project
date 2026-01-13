@@ -92,7 +92,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
         checked={completed}
         onChange={() => onToggle(id)}
         aria-label={`Mark "${title}" as ${completed ? 'incomplete' : 'complete'}`}
-        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 dark:focus:ring-offset-gray-800 cursor-pointer shrink-0 dark:bg-gray-700"
+        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-800 cursor-pointer shrink-0 dark:bg-gray-700 transition-all hover:scale-110 active:scale-95"
       />
 
       <div className="flex-1 min-w-0">
@@ -130,7 +130,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           type="button"
           onClick={() => onEdit(id)}
           aria-label={`Edit "${title}"`}
-          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800 rounded transition-colors"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-800 rounded transition-all hover:scale-105 active:scale-95"
         >
           Edit
         </button>
@@ -138,7 +138,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           type="button"
           onClick={() => onDelete(id)}
           aria-label={`Delete "${title}"`}
-          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800 rounded transition-colors"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-800 rounded transition-all hover:scale-105 active:scale-95"
         >
           Delete
         </button>

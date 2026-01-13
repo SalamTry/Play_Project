@@ -28,7 +28,7 @@ export function FilterBar({
             role="tab"
             aria-selected={filter === value}
             onClick={() => onFilterChange(value)}
-            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800 ${
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-gray-800 hover:scale-105 active:scale-95 ${
               filter === value
                 ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-600'
@@ -47,7 +47,7 @@ export function FilterBar({
           id="priority-filter"
           value={priorityFilter}
           onChange={(e) => onPriorityFilterChange(e.target.value)}
-          className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 dark:text-white"
+          className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-all bg-white dark:bg-gray-700 dark:text-white"
         >
           <option value="all">All</option>
           <option value="high">High</option>
