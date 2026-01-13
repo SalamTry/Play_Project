@@ -4,10 +4,10 @@ import { useFilter } from './useFilter'
 
 describe('useFilter', () => {
   const mockTodos = [
-    { id: '1', title: 'Buy groceries', completed: false },
-    { id: '2', title: 'Finish report', completed: true },
-    { id: '3', title: 'Call dentist', completed: false },
-    { id: '4', title: 'Pay bills', completed: true },
+    { id: '1', title: 'Buy groceries', completed: false, priority: null },
+    { id: '2', title: 'Finish report', completed: true, priority: 'high' },
+    { id: '3', title: 'Call dentist', completed: false, priority: 'medium' },
+    { id: '4', title: 'Pay bills', completed: true, priority: 'low' },
   ]
 
   describe('initialization', () => {
@@ -21,6 +21,12 @@ describe('useFilter', () => {
       const { result } = renderHook(() => useFilter())
 
       expect(result.current.searchQuery).toBe('')
+    })
+
+    it('initializes with priorityFilter set to "all"', () => {
+      const { result } = renderHook(() => useFilter())
+
+      expect(result.current.priorityFilter).toBe('all')
     })
   })
 
@@ -57,6 +63,52 @@ describe('useFilter', () => {
       })
 
       expect(result.current.filter).toBe('all')
+    })
+  })
+
+  describe('setPriorityFilter', () => {
+    it('updates priority filter to "high"', () => {
+      const { result } = renderHook(() => useFilter())
+
+      act(() => {
+        result.current.setPriorityFilter('high')
+      })
+
+      expect(result.current.priorityFilter).toBe('high')
+    })
+
+    it('updates priority filter to "medium"', () => {
+      const { result } = renderHook(() => useFilter())
+
+      act(() => {
+        result.current.setPriorityFilter('medium')
+      })
+
+      expect(result.current.priorityFilter).toBe('medium')
+    })
+
+    it('updates priority filter to "low"', () => {
+      const { result } = renderHook(() => useFilter())
+
+      act(() => {
+        result.current.setPriorityFilter('low')
+      })
+
+      expect(result.current.priorityFilter).toBe('low')
+    })
+
+    it('updates priority filter back to "all"', () => {
+      const { result } = renderHook(() => useFilter())
+
+      act(() => {
+        result.current.setPriorityFilter('high')
+      })
+
+      act(() => {
+        result.current.setPriorityFilter('all')
+      })
+
+      expect(result.current.priorityFilter).toBe('all')
     })
   })
 
@@ -123,6 +175,58 @@ describe('useFilter', () => {
         expect(filtered).toHaveLength(2)
         expect(filtered.every((todo) => todo.completed)).toBe(true)
         expect(filtered.map((t) => t.id)).toEqual(['2', '4'])
+      })
+    })
+
+    describe('filter by priority', () => {
+      it('returns all todos when priority filter is "all"', () => {
+        const { result } = renderHook(() => useFilter())
+
+        const filtered = result.current.filterTodos(mockTodos)
+
+        expect(filtered).toHaveLength(4)
+      })
+
+      it('returns only high priority todos when priority filter is "high"', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setPriorityFilter('high')
+        })
+
+        const filtered = result.current.filterTodos(mockTodos)
+
+        expect(filtered).toHaveLength(1)
+        expect(filtered[0].priority).toBe('high')
+        expect(filtered[0].title).toBe('Finish report')
+      })
+
+      it('returns only medium priority todos when priority filter is "medium"', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setPriorityFilter('medium')
+        })
+
+        const filtered = result.current.filterTodos(mockTodos)
+
+        expect(filtered).toHaveLength(1)
+        expect(filtered[0].priority).toBe('medium')
+        expect(filtered[0].title).toBe('Call dentist')
+      })
+
+      it('returns only low priority todos when priority filter is "low"', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setPriorityFilter('low')
+        })
+
+        const filtered = result.current.filterTodos(mockTodos)
+
+        expect(filtered).toHaveLength(1)
+        expect(filtered[0].priority).toBe('low')
+        expect(filtered[0].title).toBe('Pay bills')
       })
     })
 
@@ -232,6 +336,36 @@ describe('useFilter', () => {
 
         expect(filtered).toHaveLength(1)
         expect(filtered[0].title).toBe('Pay bills')
+      })
+
+      it('applies status, priority, and search filters together', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setFilter('completed')
+          result.current.setPriorityFilter('high')
+          result.current.setSearchQuery('report')
+        })
+
+        const filtered = result.current.filterTodos(mockTodos)
+
+        expect(filtered).toHaveLength(1)
+        expect(filtered[0].title).toBe('Finish report')
+        expect(filtered[0].completed).toBe(true)
+        expect(filtered[0].priority).toBe('high')
+      })
+
+      it('returns empty when combined filters have no match', () => {
+        const { result } = renderHook(() => useFilter())
+
+        act(() => {
+          result.current.setFilter('active')
+          result.current.setPriorityFilter('high')
+        })
+
+        const filtered = result.current.filterTodos(mockTodos)
+
+        expect(filtered).toHaveLength(0)
       })
     })
 

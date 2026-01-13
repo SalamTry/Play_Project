@@ -7,9 +7,10 @@ import { useState, useCallback } from 'react'
 export function useFilter() {
   const [filter, setFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const [priorityFilter, setPriorityFilter] = useState('all')
 
   /**
-   * Filter todos by status and search query
+   * Filter todos by status, priority, and search query
    * @param {Array} todos - Array of todo objects
    * @returns {Array} Filtered todos
    */
@@ -24,6 +25,11 @@ export function useFilter() {
         result = result.filter((todo) => todo.completed)
       }
 
+      // Filter by priority
+      if (priorityFilter !== 'all') {
+        result = result.filter((todo) => todo.priority === priorityFilter)
+      }
+
       // Filter by search query
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim()
@@ -34,7 +40,7 @@ export function useFilter() {
 
       return result
     },
-    [filter, searchQuery]
+    [filter, searchQuery, priorityFilter]
   )
 
   return {
@@ -42,6 +48,8 @@ export function useFilter() {
     setFilter,
     searchQuery,
     setSearchQuery,
+    priorityFilter,
+    setPriorityFilter,
     filterTodos,
   }
 }
