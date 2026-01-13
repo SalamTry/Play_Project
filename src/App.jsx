@@ -8,6 +8,7 @@ import { EditTodoForm } from './components/EditTodoForm'
 import { FilterBar } from './components/FilterBar'
 import { SearchBar } from './components/SearchBar'
 import { ThemeToggle } from './components/ThemeToggle'
+import { AnimatedList, AnimatedItem } from './components/AnimatedList'
 
 function App() {
   const { todos, addTodo, deleteTodo, toggleTodo, updateTodo } = useTodos()
@@ -92,24 +93,28 @@ function App() {
           </div>
         ) : (
           <ul className="space-y-2 sm:space-y-3" role="list" aria-label="Todo list">
-            {filteredTodos.map((todo) => (
-              <li key={todo.id}>
-                {editingId === todo.id ? (
-                  <EditTodoForm
-                    todo={todo}
-                    onSave={handleSave}
-                    onCancel={handleCancelEdit}
-                  />
-                ) : (
-                  <TodoItem
-                    todo={todo}
-                    onToggle={toggleTodo}
-                    onDelete={deleteTodo}
-                    onEdit={handleEdit}
-                  />
-                )}
-              </li>
-            ))}
+            <AnimatedList>
+              {filteredTodos.map((todo) => (
+                <AnimatedItem key={todo.id} itemKey={todo.id}>
+                  <li>
+                    {editingId === todo.id ? (
+                      <EditTodoForm
+                        todo={todo}
+                        onSave={handleSave}
+                        onCancel={handleCancelEdit}
+                      />
+                    ) : (
+                      <TodoItem
+                        todo={todo}
+                        onToggle={toggleTodo}
+                        onDelete={deleteTodo}
+                        onEdit={handleEdit}
+                      />
+                    )}
+                  </li>
+                </AnimatedItem>
+              ))}
+            </AnimatedList>
           </ul>
         )}
       </div>
