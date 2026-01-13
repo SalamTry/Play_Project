@@ -65,7 +65,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
     <form
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
-      className="flex flex-col gap-3 p-3 sm:p-4 bg-white border-2 border-blue-300 rounded-lg shadow-md"
+      className="flex flex-col gap-3 p-3 sm:p-4 bg-white dark:bg-gray-800 border-2 border-blue-300 dark:border-blue-600 rounded-lg shadow-md"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex-1">
@@ -79,7 +79,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Task title"
-            className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+            className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white dark:bg-gray-700 dark:text-white"
           />
         </div>
 
@@ -92,7 +92,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
             id={`edit-due-date-${todo.id}`}
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+            className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white dark:bg-gray-700 dark:text-white"
           />
         </div>
 
@@ -104,7 +104,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
             id={`edit-priority-${todo.id}`}
             value={priority}
             onChange={(e) => setPriority(e.target.value)}
-            className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white"
+            className="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow bg-white dark:bg-gray-700 dark:text-white"
           >
             <option value="">None</option>
             <option value="high">High</option>
@@ -118,13 +118,13 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
         <button
           type="button"
           onClick={onCancel}
-          className="w-full sm:w-auto px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 rounded transition-colors"
+          className="w-full sm:w-auto px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800 rounded transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="w-full sm:w-auto px-3 py-1.5 text-sm bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800 transition-all"
+          className="w-full sm:w-auto px-3 py-1.5 text-sm bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 active:bg-blue-800 transition-all"
         >
           Save
         </button>

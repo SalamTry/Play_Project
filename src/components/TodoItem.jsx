@@ -52,11 +52,11 @@ function formatDueDate(dateString) {
 function getPriorityStyle(priority) {
   switch (priority) {
     case 'high':
-      return { bg: 'bg-rose-100', text: 'text-rose-700', label: 'High' }
+      return { bg: 'bg-rose-100 dark:bg-rose-900/50', text: 'text-rose-700 dark:text-rose-300', label: 'High' }
     case 'medium':
-      return { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Medium' }
+      return { bg: 'bg-amber-100 dark:bg-amber-900/50', text: 'text-amber-700 dark:text-amber-300', label: 'Medium' }
     case 'low':
-      return { bg: 'bg-emerald-100', text: 'text-emerald-700', label: 'Low' }
+      return { bg: 'bg-emerald-100 dark:bg-emerald-900/50', text: 'text-emerald-700 dark:text-emerald-300', label: 'Low' }
     default:
       return null
   }
@@ -83,8 +83,8 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
 
   return (
     <div
-      className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow ${
-        showOverdueStyle ? 'border-red-300 bg-red-50' : 'border-gray-200'
+      className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white dark:bg-gray-800 border rounded-lg shadow-sm hover:shadow-md transition-shadow ${
+        showOverdueStyle ? 'border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20' : 'border-gray-200 dark:border-gray-700'
       }`}
     >
       <input
@@ -92,13 +92,13 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
         checked={completed}
         onChange={() => onToggle(id)}
         aria-label={`Mark "${title}" as ${completed ? 'incomplete' : 'complete'}`}
-        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer shrink-0"
+        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 dark:focus:ring-offset-gray-800 cursor-pointer shrink-0 dark:bg-gray-700"
       />
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <p
-            className={`text-sm sm:text-base text-gray-900 break-words ${completed ? 'line-through text-gray-500' : ''}`}
+            className={`text-sm sm:text-base text-gray-900 dark:text-gray-100 break-words ${completed ? 'line-through text-gray-500 dark:text-gray-500' : ''}`}
           >
             {title}
           </p>
@@ -114,10 +114,10 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           <p
             className={`text-xs sm:text-sm mt-0.5 ${
               showOverdueStyle
-                ? 'text-red-600 font-medium'
+                ? 'text-red-600 dark:text-red-400 font-medium'
                 : isToday(dueDate)
-                ? 'text-blue-600 font-medium'
-                : 'text-gray-500'
+                ? 'text-blue-600 dark:text-blue-400 font-medium'
+                : 'text-gray-500 dark:text-gray-400'
             }`}
           >
             {formatDueDate(dueDate)}
@@ -130,7 +130,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           type="button"
           onClick={() => onEdit(id)}
           aria-label={`Edit "${title}"`}
-          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded transition-colors"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800 rounded transition-colors"
         >
           Edit
         </button>
@@ -138,7 +138,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           type="button"
           onClick={() => onDelete(id)}
           aria-label={`Delete "${title}"`}
-          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded transition-colors"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800 rounded transition-colors"
         >
           Delete
         </button>

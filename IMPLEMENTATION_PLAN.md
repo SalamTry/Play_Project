@@ -8,9 +8,9 @@
 | Metric | Count |
 |--------|-------|
 | Total Tasks | 17 |
-| Completed | 7 |
+| Completed | 12 |
 | Blocked | 0 |
-| Remaining | 10 |
+| Remaining | 5 |
 
 ---
 
@@ -62,7 +62,7 @@
   - Depends: none
   - **MUST:** Create new component with search input, magnifying glass icon, and clear button. Debounce input (300ms).
 
-- [ ] **TASK-008:** Integrate filter and search in App.jsx
+- [x] **TASK-008:** Integrate filter and search in App.jsx
   - Files: `src/App.jsx`
   - Tests: integration tests
   - Depends: TASK-005, TASK-006, TASK-007
@@ -70,25 +70,25 @@
 
 ### Phase 3: Dark Mode
 
-- [ ] **TASK-009:** Create useTheme hook with localStorage persistence
+- [x] **TASK-009:** Create useTheme hook with localStorage persistence
   - Files: `src/hooks/useTheme.js` (CREATE NEW FILE)
   - Tests: `src/hooks/useTheme.test.js` (CREATE NEW FILE)
   - Depends: none
   - **MUST:** Create new hook that returns { theme, toggleTheme, isDark }. Store in localStorage key 'theme'. Respect prefers-color-scheme on first load.
 
-- [ ] **TASK-010:** Create ThemeToggle component
+- [x] **TASK-010:** Create ThemeToggle component
   - Files: `src/components/ThemeToggle.jsx` (CREATE NEW FILE)
   - Tests: `src/components/ThemeToggle.test.jsx` (CREATE NEW FILE)
   - Depends: TASK-009
   - **MUST:** Create new button component with sun/moon icons. Accessible (aria-label). Smooth icon transition.
 
-- [ ] **TASK-011:** Configure Tailwind for dark mode
+- [x] **TASK-011:** Configure Tailwind for dark mode
   - Files: `tailwind.config.js`, `src/index.css`
   - Tests: visual inspection
   - Depends: none
   - **MUST:** Set darkMode: 'class' in tailwind config. Add CSS variables for theme colors if needed.
 
-- [ ] **TASK-012:** Apply dark mode styles to all components
+- [x] **TASK-012:** Apply dark mode styles to all components
   - Files: `src/App.jsx`, all components in `src/components/`
   - Tests: visual inspection
   - Depends: TASK-009, TASK-010, TASK-011
