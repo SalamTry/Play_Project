@@ -82,11 +82,12 @@ describe('TodoList', () => {
       expect(listItems).toHaveLength(3)
     })
 
-    it('renders the correct number of checkboxes', () => {
+    it('renders the correct number of checkboxes (selection + completion per item)', () => {
       renderWithDnd(<TodoList {...defaultProps} />)
 
       const checkboxes = screen.getAllByRole('checkbox')
-      expect(checkboxes).toHaveLength(3)
+      // Each todo has 2 checkboxes: selection and completion
+      expect(checkboxes).toHaveLength(6)
     })
   })
 
@@ -122,8 +123,9 @@ describe('TodoList', () => {
       const onToggle = vi.fn()
       renderWithDnd(<TodoList {...defaultProps} onToggle={onToggle} />)
 
-      const checkboxes = screen.getAllByRole('checkbox')
-      await user.click(checkboxes[0])
+      // Use specific label for completion checkbox (index 1 is the completion checkbox for first todo)
+      const completionCheckbox = screen.getByLabelText(/mark "first todo" as complete/i)
+      await user.click(completionCheckbox)
 
       expect(onToggle).toHaveBeenCalledTimes(1)
       expect(onToggle).toHaveBeenCalledWith('todo-1')
@@ -155,14 +157,18 @@ describe('TodoList', () => {
   })
 
   describe('todo state display', () => {
-    it('renders completed todos with checked checkboxes', () => {
+    it('renders completed todos with checked completion checkboxes', () => {
       renderWithDnd(<TodoList {...defaultProps} />)
 
-      const checkboxes = screen.getAllByRole('checkbox')
+      // Check completion checkboxes by their labels
+      const firstCompletionCheckbox = screen.getByLabelText(/mark "first todo" as complete/i)
+      const secondCompletionCheckbox = screen.getByLabelText(/mark "second todo" as incomplete/i)
+      const thirdCompletionCheckbox = screen.getByLabelText(/mark "third todo" as complete/i)
+
       // Second todo is completed
-      expect(checkboxes[0]).not.toBeChecked()
-      expect(checkboxes[1]).toBeChecked()
-      expect(checkboxes[2]).not.toBeChecked()
+      expect(firstCompletionCheckbox).not.toBeChecked()
+      expect(secondCompletionCheckbox).toBeChecked()
+      expect(thirdCompletionCheckbox).not.toBeChecked()
     })
 
     it('renders single todo correctly', () => {
@@ -236,13 +242,14 @@ describe('TodoList', () => {
       expect(screen.getByText('Second todo')).toBeInTheDocument()
     })
 
-    it('calls onSelect when todo is clicked', async () => {
+    it('calls onSelect when selection checkbox is clicked', async () => {
       const user = userEvent.setup()
       const onSelect = vi.fn()
       renderWithDnd(<TodoList {...defaultProps} onSelect={onSelect} />)
 
-      // Click on the first todo text
-      await user.click(screen.getByText('First todo'))
+      // Click on the selection checkbox for the first todo
+      const selectionCheckbox = screen.getByLabelText(/select "first todo"/i)
+      await user.click(selectionCheckbox)
 
       expect(onSelect).toHaveBeenCalledWith('todo-1')
     })

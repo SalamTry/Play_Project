@@ -30,10 +30,11 @@ describe('TodoItem', () => {
       expect(screen.getByText('Test todo')).toBeInTheDocument()
     })
 
-    it('renders a checkbox', () => {
+    it('renders completion and selection checkboxes', () => {
       render(<TodoItem {...defaultProps} />)
 
-      expect(screen.getByRole('checkbox')).toBeInTheDocument()
+      const checkboxes = screen.getAllByRole('checkbox')
+      expect(checkboxes).toHaveLength(2)
     })
 
     it('renders edit button', () => {
@@ -48,27 +49,30 @@ describe('TodoItem', () => {
       expect(screen.getByRole('button', { name: /delete/i })).toBeInTheDocument()
     })
 
-    it('checkbox is unchecked when todo is not completed', () => {
+    it('completion checkbox is unchecked when todo is not completed', () => {
       render(<TodoItem {...defaultProps} />)
 
-      expect(screen.getByRole('checkbox')).not.toBeChecked()
+      const completionCheckbox = screen.getByLabelText(/mark "test todo" as complete/i)
+      expect(completionCheckbox).not.toBeChecked()
     })
 
-    it('checkbox is checked when todo is completed', () => {
+    it('completion checkbox is checked when todo is completed', () => {
       const completedTodo = { ...baseTodo, completed: true }
       render(<TodoItem {...defaultProps} todo={completedTodo} />)
 
-      expect(screen.getByRole('checkbox')).toBeChecked()
+      const completionCheckbox = screen.getByLabelText(/mark "test todo" as incomplete/i)
+      expect(completionCheckbox).toBeChecked()
     })
   })
 
   describe('interactions', () => {
-    it('calls onToggle with todo id when checkbox is clicked', async () => {
+    it('calls onToggle with todo id when completion checkbox is clicked', async () => {
       const user = userEvent.setup()
       const onToggle = vi.fn()
       render(<TodoItem {...defaultProps} onToggle={onToggle} />)
 
-      await user.click(screen.getByRole('checkbox'))
+      const completionCheckbox = screen.getByLabelText(/mark "test todo" as complete/i)
+      await user.click(completionCheckbox)
 
       expect(onToggle).toHaveBeenCalledTimes(1)
       expect(onToggle).toHaveBeenCalledWith('test-id-123')
@@ -519,6 +523,104 @@ describe('TodoItem', () => {
       await user.click(addButton)
 
       expect(onAddSubtask).toHaveBeenCalledWith('test-id-123', 'New subtask text')
+    })
+  })
+
+  describe('selection checkbox', () => {
+    it('renders selection checkbox on left side', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      expect(selectionCheckbox).toBeInTheDocument()
+      expect(selectionCheckbox).toHaveAttribute('type', 'checkbox')
+    })
+
+    it('selection checkbox is unchecked when todo is not selected', () => {
+      render(<TodoItem {...defaultProps} isSelected={false} />)
+
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      expect(selectionCheckbox).not.toBeChecked()
+    })
+
+    it('selection checkbox is checked when todo is selected', () => {
+      render(<TodoItem {...defaultProps} isSelected={true} />)
+
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      expect(selectionCheckbox).toBeChecked()
+    })
+
+    it('calls onSelect with todo id when selection checkbox is clicked', async () => {
+      const user = userEvent.setup()
+      const onSelect = vi.fn()
+      render(<TodoItem {...defaultProps} onSelect={onSelect} isSelected={false} />)
+
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      await user.click(selectionCheckbox)
+
+      expect(onSelect).toHaveBeenCalledTimes(1)
+      expect(onSelect).toHaveBeenCalledWith('test-id-123')
+    })
+
+    it('applies highlight background when todo is selected', () => {
+      const { container } = render(<TodoItem {...defaultProps} isSelected={true} />)
+
+      const todoContainer = container.firstChild.firstChild
+      expect(todoContainer).toHaveClass('bg-indigo-50/50')
+      expect(todoContainer).toHaveClass('border-indigo-500')
+      expect(todoContainer).toHaveClass('ring-2')
+      expect(todoContainer).toHaveClass('ring-indigo-500/50')
+    })
+
+    it('does not apply highlight background when todo is not selected', () => {
+      const { container } = render(<TodoItem {...defaultProps} isSelected={false} />)
+
+      const todoContainer = container.firstChild.firstChild
+      expect(todoContainer).not.toHaveClass('bg-indigo-50/50')
+      expect(todoContainer).not.toHaveClass('border-indigo-500')
+    })
+
+    it('has separate selection and completion checkboxes', () => {
+      render(<TodoItem {...defaultProps} />)
+
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      const completionCheckbox = screen.getByLabelText(/mark "test todo" as complete/i)
+
+      expect(selectionCheckbox).toBeInTheDocument()
+      expect(completionCheckbox).toBeInTheDocument()
+      expect(selectionCheckbox).not.toBe(completionCheckbox)
+    })
+
+    it('selection checkbox does not toggle completion', async () => {
+      const user = userEvent.setup()
+      const onToggle = vi.fn()
+      const onSelect = vi.fn()
+      render(<TodoItem {...defaultProps} onToggle={onToggle} onSelect={onSelect} isSelected={false} />)
+
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      await user.click(selectionCheckbox)
+
+      expect(onSelect).toHaveBeenCalled()
+      expect(onToggle).not.toHaveBeenCalled()
+    })
+
+    it('completion checkbox does not toggle selection', async () => {
+      const user = userEvent.setup()
+      const onToggle = vi.fn()
+      const onSelect = vi.fn()
+      render(<TodoItem {...defaultProps} onToggle={onToggle} onSelect={onSelect} isSelected={false} />)
+
+      const completionCheckbox = screen.getByLabelText(/mark "test todo" as complete/i)
+      await user.click(completionCheckbox)
+
+      expect(onToggle).toHaveBeenCalled()
+      expect(onSelect).not.toHaveBeenCalled()
+    })
+
+    it('does not throw when onSelect is not provided', () => {
+      render(<TodoItem {...defaultProps} onSelect={undefined} isSelected={false} />)
+
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      expect(() => selectionCheckbox.click()).not.toThrow()
     })
   })
 })

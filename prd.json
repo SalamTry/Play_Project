@@ -240,7 +240,7 @@
       ],
       "files": ["src/hooks/useSelection.js"],
       "tests": ["src/hooks/useSelection.test.js"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-018",
@@ -254,7 +254,7 @@
       ],
       "files": ["src/components/TodoItem.jsx"],
       "tests": ["src/components/TodoItem.test.jsx"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-019",

@@ -104,11 +104,8 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit, onToggleSubtask, on
 
   const showOverdueStyle = dueDate && isOverdue(dueDate) && !completed
 
-  const handleContainerClick = (e) => {
-    // Don't select when clicking on buttons, inputs, or interactive elements
-    const tagName = e.target.tagName.toLowerCase()
-    const isInteractive = tagName === 'button' || tagName === 'input' || e.target.closest('button')
-    if (!isInteractive && onSelect) {
+  const handleSelectionChange = () => {
+    if (onSelect) {
       onSelect(id)
     }
   }
@@ -116,21 +113,29 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit, onToggleSubtask, on
   return (
     <div className="space-y-0">
       <div
-        onClick={handleContainerClick}
-        className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white/90 dark:bg-slate-800/90 border rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer ${
+        className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white/90 dark:bg-slate-800/90 border rounded-xl shadow-sm hover:shadow-md transition-all ${
           isSelected
-            ? 'border-indigo-500 dark:border-indigo-400 ring-2 ring-indigo-500/50'
+            ? 'border-indigo-500 dark:border-indigo-400 ring-2 ring-indigo-500/50 bg-indigo-50/50 dark:bg-indigo-900/20'
             : showOverdueStyle
               ? 'border-red-300 dark:border-red-700 bg-red-50/90 dark:bg-red-900/20'
               : 'border-slate-200 dark:border-slate-700'
         }`}
       >
+      {/* Selection checkbox on left side */}
+      <input
+        type="checkbox"
+        checked={isSelected}
+        onChange={handleSelectionChange}
+        aria-label={`Select "${title}"`}
+        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 cursor-pointer shrink-0 dark:bg-slate-700 transition-all hover:scale-110 active:scale-95"
+      />
+      {/* Completion checkbox */}
       <input
         type="checkbox"
         checked={completed}
         onChange={() => onToggle(id)}
         aria-label={`Mark "${title}" as ${completed ? 'incomplete' : 'complete'}`}
-        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 cursor-pointer shrink-0 dark:bg-slate-700 transition-all hover:scale-110 active:scale-95"
+        className="mt-0.5 sm:mt-0 h-5 w-5 rounded-full border-slate-300 dark:border-slate-600 text-emerald-600 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 cursor-pointer shrink-0 dark:bg-slate-700 transition-all hover:scale-110 active:scale-95"
       />
 
       <div className="flex-1 min-w-0">

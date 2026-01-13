@@ -194,8 +194,9 @@ describe('DraggableTodoItem', () => {
         </DndWrapper>
       )
 
-      const checkbox = screen.getByRole('checkbox')
-      await checkbox.click()
+      // Use the specific completion checkbox (not selection checkbox)
+      const completionCheckbox = screen.getByLabelText(/mark "test todo" as complete/i)
+      await completionCheckbox.click()
 
       expect(onToggle).toHaveBeenCalledWith('test-id-123')
     })
@@ -242,15 +243,15 @@ describe('DraggableTodoItem', () => {
 
     it('forwards onSelect callback to TodoItem', async () => {
       const onSelect = vi.fn()
-      const { container } = render(
+      render(
         <DndWrapper>
           <DraggableTodoItem {...defaultProps} onSelect={onSelect} />
         </DndWrapper>
       )
 
-      // Click on the todo container (not on buttons)
-      const todoText = screen.getByText('Test todo')
-      await todoText.click()
+      // Click on the selection checkbox
+      const selectionCheckbox = screen.getByLabelText(/select "test todo"/i)
+      await selectionCheckbox.click()
 
       expect(onSelect).toHaveBeenCalledWith('test-id-123')
     })
