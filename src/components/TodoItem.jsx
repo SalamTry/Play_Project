@@ -63,7 +63,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
 
   return (
     <div
-      className={`flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm ${
+      className={`flex items-start sm:items-center gap-3 p-3 sm:p-4 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow ${
         showOverdueStyle ? 'border-red-300 bg-red-50' : 'border-gray-200'
       }`}
     >
@@ -72,18 +72,18 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
         checked={completed}
         onChange={() => onToggle(id)}
         aria-label={`Mark "${title}" as ${completed ? 'incomplete' : 'complete'}`}
-        className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        className="mt-0.5 sm:mt-0 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer shrink-0"
       />
 
       <div className="flex-1 min-w-0">
         <p
-          className={`text-gray-900 ${completed ? 'line-through text-gray-500' : ''}`}
+          className={`text-sm sm:text-base text-gray-900 break-words ${completed ? 'line-through text-gray-500' : ''}`}
         >
           {title}
         </p>
         {dueDate && (
           <p
-            className={`text-sm ${
+            className={`text-xs sm:text-sm mt-0.5 ${
               showOverdueStyle
                 ? 'text-red-600 font-medium'
                 : isToday(dueDate)
@@ -96,12 +96,12 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
         )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 shrink-0">
         <button
           type="button"
           onClick={() => onEdit(id)}
           aria-label={`Edit "${title}"`}
-          className="px-3 py-1 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded transition-colors"
         >
           Edit
         </button>
@@ -109,7 +109,7 @@ export function TodoItem({ todo, onToggle, onDelete, onEdit }) {
           type="button"
           onClick={() => onDelete(id)}
           aria-label={`Delete "${title}"`}
-          className="px-3 py-1 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+          className="px-2 sm:px-3 py-1 text-xs sm:text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 rounded transition-colors"
         >
           Delete
         </button>

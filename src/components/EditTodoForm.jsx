@@ -60,7 +60,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
     <form
       onSubmit={handleSubmit}
       onKeyDown={handleKeyDown}
-      className="flex flex-col gap-3 p-3 bg-white border border-blue-300 rounded-lg shadow-sm"
+      className="flex flex-col gap-3 p-3 sm:p-4 bg-white border-2 border-blue-300 rounded-lg shadow-md"
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex-1">
@@ -74,7 +74,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Task title"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
           />
         </div>
 
@@ -87,22 +87,22 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
             id={`edit-due-date-${todo.id}`}
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
           />
         </div>
       </div>
 
-      <div className="flex gap-2 justify-end">
+      <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+          className="w-full sm:w-auto px-3 py-1.5 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 rounded transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          className="w-full sm:w-auto px-3 py-1.5 text-sm bg-blue-600 text-white rounded shadow-sm hover:bg-blue-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:bg-blue-800 transition-all"
         >
           Save
         </button>
