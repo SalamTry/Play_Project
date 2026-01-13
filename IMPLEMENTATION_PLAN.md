@@ -8,9 +8,9 @@
 | Metric | Count |
 |--------|-------|
 | Total Tasks | 17 |
-| Completed | 13 |
+| Completed | 14 |
 | Blocked | 0 |
-| Remaining | 4 |
+| Remaining | 3 |
 
 ---
 
@@ -102,7 +102,7 @@
   - Depends: none
   - **MUST:** Run `npm install framer-motion`. Create AnimatedList wrapper component using AnimatePresence and motion.div.
 
-- [ ] **TASK-014:** Add list animations (add/remove/reorder)
+- [x] **TASK-014:** Add list animations (add/remove/reorder)
   - Files: `src/App.jsx` or `src/components/TodoList.jsx`
   - Tests: existing tests pass
   - Depends: TASK-013
