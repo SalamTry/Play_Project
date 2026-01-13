@@ -1,66 +1,39 @@
 #!/bin/bash
-# Ralph v3 Monitor - Watch progress in real-time
+# Ralph Monitor - Watch progress
 
 while true; do
     clear
-    echo "═══════════════════════════════════════"
-    echo "📊 RALPH v3 MONITOR"
-    echo "═══════════════════════════════════════"
+    echo "=== RALPH MONITOR ==="
+    echo ""
+    echo "Branch: $(git branch --show-current 2>/dev/null)"
     echo ""
 
-    # Progress from prd.json
     if [ -f prd.json ]; then
-        TOTAL=$(python3 -c "import json; d=json.load(open('prd.json')); print(len(d.get('stories',[])))" 2>/dev/null || echo 0)
-        DONE=$(python3 -c "import json; d=json.load(open('prd.json')); print(sum(1 for s in d.get('stories',[]) if s.get('passes')))" 2>/dev/null || echo 0)
-        REMAINING=$((TOTAL - DONE))
-
-        echo "📋 PROGRESS: $DONE / $TOTAL stories"
+        TOTAL=$(python3 -c "import json; print(len(json.load(open('prd.json')).get('stories',[])))" 2>/dev/null)
+        DONE=$(python3 -c "import json; print(sum(1 for s in json.load(open('prd.json')).get('stories',[]) if s.get('passes')))" 2>/dev/null)
+        echo "Progress: $DONE / $TOTAL stories"
         echo ""
 
-        # Progress bar
-        if [ "$TOTAL" -gt 0 ]; then
-            PCT=$((DONE * 100 / TOTAL))
-            BAR_DONE=$((DONE * 20 / TOTAL))
-            BAR_LEFT=$((20 - BAR_DONE))
-            printf "   ["
-            printf "%0.s█" $(seq 1 $BAR_DONE 2>/dev/null)
-            printf "%0.s░" $(seq 1 $BAR_LEFT 2>/dev/null)
-            printf "] %d%%\n" $PCT
-        fi
-        echo ""
-
-        # Next story
-        echo "📌 NEXT STORY"
-        NEXT=$(python3 -c "
+        echo "Next:"
+        python3 -c "
 import json
-d=json.load(open('prd.json'))
-for s in d.get('stories',[]):
+for s in json.load(open('prd.json')).get('stories',[]):
     if not s.get('passes'):
-        print(f\"   {s['id']}: {s['title']}\")
+        print(f\"  {s['id']}: {s['title']}\")
         break
-" 2>/dev/null || echo "   (none)")
-        echo "$NEXT"
-        echo ""
-    else
-        echo "❌ No prd.json found"
+" 2>/dev/null || echo "  (all done)"
         echo ""
     fi
 
-    # Recent progress
-    echo "📝 RECENT PROGRESS"
-    if [ -f progress.txt ]; then
-        tail -8 progress.txt | sed 's/^/   /'
-    else
-        echo "   (no progress.txt)"
-    fi
+    echo "Recent:"
+    [ -f progress.txt ] && tail -6 progress.txt | sed 's/^/  /'
     echo ""
 
-    # Recent commits
-    echo "🔧 RECENT COMMITS"
-    git log --oneline -5 2>/dev/null | sed 's/^/   /' || echo "   (no git)"
+    echo "Commits:"
+    git log --oneline -4 2>/dev/null | sed 's/^/  /'
     echo ""
 
-    echo "───────────────────────────────────────"
-    echo "Press Ctrl+C to stop | Refreshes every 3s"
+    echo "---"
+    echo "Ctrl+C to stop | Refresh: 3s"
     sleep 3
 done

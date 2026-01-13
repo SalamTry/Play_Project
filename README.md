@@ -164,3 +164,27 @@ Key patterns discovered during development:
 3. **Stable keys in lists** - Use item IDs, not array indices
 4. **Accessibility first** - aria-labels and roles prevent rework
 5. **Test edge cases early** - Empty states, null values, boundary conditions
+
+---
+
+## Release Notes
+
+### v3.1 - Branch & PR Workflow (2026-01-13)
+
+**New Features:**
+- Auto branch creation per session: `feature/US-XXX-YYYYMMDD-HHMM`
+- Auto PR creation when loop completes (requires `gh` CLI)
+- Auto-detects base branch (main/master)
+
+**Simplified:**
+- `loop.sh`: 382 → 150 lines
+- `monitor.sh`: 125 → 39 lines
+- Removed dead token tracking code
+- Removed unused `branchName` field from prd.json
+- Cleaner output without excessive emojis
+
+**Usage:**
+```bash
+./loop.sh 10        # Creates branch, runs 10 iterations, creates PR at end
+./monitor.sh        # Watch progress
+```
