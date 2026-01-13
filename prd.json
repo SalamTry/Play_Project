@@ -170,7 +170,7 @@
       ],
       "files": ["src/components/KeyboardShortcutsHelp.jsx"],
       "tests": ["src/components/KeyboardShortcutsHelp.test.jsx"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-013",
@@ -184,7 +184,7 @@
       ],
       "files": ["package.json", "src/App.jsx"],
       "tests": [],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-014",
@@ -198,7 +198,7 @@
       ],
       "files": ["src/hooks/useTodos.js"],
       "tests": ["src/hooks/useTodos.test.js"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-015",
@@ -212,7 +212,7 @@
       ],
       "files": ["src/components/DraggableTodoItem.jsx"],
       "tests": ["src/components/DraggableTodoItem.test.jsx"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-016",
@@ -226,7 +226,7 @@
       ],
       "files": ["src/components/TodoList.jsx"],
       "tests": ["src/components/TodoList.test.jsx"],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-017",

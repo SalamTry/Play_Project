@@ -5,17 +5,16 @@ import { useTodos } from './hooks/useTodos'
 import { useFilter } from './hooks/useFilter'
 import { useTheme } from './hooks/useTheme'
 import { TodoForm } from './components/TodoForm'
-import { TodoItem } from './components/TodoItem'
+import { TodoList } from './components/TodoList'
 import { EditTodoForm } from './components/EditTodoForm'
 import { FilterBar } from './components/FilterBar'
 import { SearchBar } from './components/SearchBar'
 import { ThemeToggle } from './components/ThemeToggle'
-import { AnimatedList, AnimatedItem } from './components/AnimatedList'
 import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 function App() {
-  const { todos, addTodo, deleteTodo, toggleTodo, updateTodo } = useTodos()
+  const { todos, addTodo, deleteTodo, toggleTodo, updateTodo, reorderTodos } = useTodos()
   const {
     filter,
     setFilter,
@@ -45,13 +44,13 @@ function App() {
     })
   )
 
-  // Drag end handler (placeholder for future reorder implementation)
+  // Drag end handler - reorders todos when dropped
   const handleDragEnd = useCallback((event) => {
     const { active, over } = event
     if (active && over && active.id !== over.id) {
-      // Reorder logic will be added in US-014/US-016
+      reorderTodos(active.id, over.id)
     }
-  }, [])
+  }, [reorderTodos])
 
   // Apply dark class to html element based on theme
   useEffect(() => {
@@ -193,32 +192,18 @@ function App() {
               </p>
             </div>
           ) : (
-            <ul className="space-y-2 sm:space-y-3" role="list" aria-label="Todo list">
-              <AnimatedList>
-                {filteredTodos.map((todo) => (
-                  <AnimatedItem key={todo.id} itemKey={todo.id}>
-                    <li>
-                      {editingId === todo.id ? (
-                        <EditTodoForm
-                          todo={todo}
-                          onSave={handleSave}
-                          onCancel={handleCancelEdit}
-                        />
-                      ) : (
-                        <TodoItem
-                          todo={todo}
-                          onToggle={toggleTodo}
-                          onDelete={deleteTodo}
-                          onEdit={handleEdit}
-                          isSelected={selectedTodoId === todo.id}
-                          onSelect={setSelectedTodoId}
-                        />
-                      )}
-                    </li>
-                  </AnimatedItem>
-                ))}
-              </AnimatedList>
-            </ul>
+            <TodoList
+              todos={filteredTodos}
+              onToggle={toggleTodo}
+              onDelete={deleteTodo}
+              onEdit={handleEdit}
+              selectedTodoId={selectedTodoId}
+              onSelect={setSelectedTodoId}
+              editingId={editingId}
+              onSave={handleSave}
+              onCancelEdit={handleCancelEdit}
+              EditTodoForm={EditTodoForm}
+            />
           )}
         </div>
 
