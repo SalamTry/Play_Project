@@ -1,40 +1,72 @@
-# Todo App Enhancement Spec
+# Todo App Phase 2 Spec
 
 ## Overview
-Enhance the existing React Todo App with new features.
+Enhance the Todo App with productivity features and UX polish.
 
 ## Features
 
-### 1. Due Dates & Priority
-- Add due date picker to TodoForm
-- Add priority dropdown (High/Medium/Low/None) to TodoForm
-- Display due date on TodoItem (red if overdue)
-- Display priority badge on TodoItem (rose=high, amber=medium, emerald=low)
-- Allow editing due date and priority in EditTodoForm
+### 1. Categories/Tags
+- Add tags field to todo model (array of tag objects)
+- Create TagInput component for adding/removing tags
+- Each tag has: id, name, color
+- Display tags as colored pills on TodoItem
+- Predefined color palette (8 colors)
+- Tags persist to localStorage
+- Filter todos by tag (multi-select)
 
-### 2. Filter & Search
-- Create FilterBar with tabs: All / Active / Completed
-- Create SearchBar with text input and debounce
-- Filter todos by status and search query
-- Integrate in App.jsx
+### 2. Subtasks
+- Add subtasks field to todo model (array of subtask objects)
+- Each subtask has: id, text, completed
+- Create SubtaskList component with checkboxes
+- Show subtask progress on TodoItem (e.g., "2/5")
+- Add/remove subtasks in EditTodoForm
+- Parent todo auto-completes when all subtasks done (optional)
 
-### 3. Dark Mode
-- Create useTheme hook with localStorage persistence
-- Respect system preference on first load
-- Create ThemeToggle button with sun/moon icons
-- Apply dark: variants to all components
+### 3. Keyboard Shortcuts
+- Create useKeyboardShortcuts hook
+- Shortcuts:
+  - `Ctrl/Cmd + N`: Focus new todo input
+  - `Ctrl/Cmd + F`: Focus search input
+  - `Ctrl/Cmd + 1/2/3`: Switch filter tabs
+  - `Escape`: Clear selection / close edit form
+  - `Delete/Backspace`: Delete selected todo
+- Show keyboard shortcut hints in UI
+- Create KeyboardShortcutsHelp modal (toggle with `?`)
 
-### 4. Animations
-- Install Framer Motion
-- Add fade in/out animations for todo items
-- Add hover/focus micro-interactions on buttons
-- Polish overall visual design
+### 4. Drag & Drop Reordering
+- Install @dnd-kit/core and @dnd-kit/sortable
+- Add order/position field to todo model
+- Create DraggableTodoItem wrapper
+- Visual feedback during drag (shadow, scale)
+- Persist order to localStorage
+- Respect current sort when not in custom order mode
+
+### 5. Bulk Actions
+- Add selection state (Set of selected todo IDs)
+- Create SelectionToolbar component
+- Checkbox on each TodoItem for selection
+- "Select All" / "Deselect All" buttons
+- Bulk actions: Complete, Delete, Set Priority, Add Tag
+- Visual highlight for selected items
+- Clear selection after bulk action
+
+### 6. Sorting Options
+- Create useSorting hook
+- Sort options:
+  - Custom (drag & drop order)
+  - Date Created (newest/oldest)
+  - Priority (high to low / low to high)
+  - Alphabetical (A-Z / Z-A)
+  - Due Date (if exists)
+- Create SortDropdown component
+- Persist sort preference to localStorage
 
 ## Tech Stack
 - React 19 + Vite
 - Tailwind CSS
 - Vitest + React Testing Library
-- Framer Motion (to be added)
+- Framer Motion
+- @dnd-kit/core, @dnd-kit/sortable (to be added)
 
 ## Quality Gates
 ```bash
