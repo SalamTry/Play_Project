@@ -9,6 +9,7 @@ import { FilterBar } from './components/FilterBar'
 import { SearchBar } from './components/SearchBar'
 import { ThemeToggle } from './components/ThemeToggle'
 import { AnimatedList, AnimatedItem } from './components/AnimatedList'
+import { KeyboardShortcutsHelp } from './components/KeyboardShortcutsHelp'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
   const { isDark, toggleTheme } = useTheme()
   const [editingId, setEditingId] = useState(null)
   const [selectedTodoId, setSelectedTodoId] = useState(null)
+  const [isShortcutsHelpOpen, setIsShortcutsHelpOpen] = useState(false)
 
   const todoFormRef = useRef(null)
   const searchBarRef = useRef(null)
@@ -62,8 +64,16 @@ function App() {
   }, [setFilter])
 
   const handleEscape = useCallback(() => {
-    setEditingId(null)
-    setSelectedTodoId(null)
+    if (isShortcutsHelpOpen) {
+      setIsShortcutsHelpOpen(false)
+    } else {
+      setEditingId(null)
+      setSelectedTodoId(null)
+    }
+  }, [isShortcutsHelpOpen])
+
+  const openShortcutsHelp = useCallback(() => {
+    setIsShortcutsHelpOpen(true)
   }, [])
 
   const deleteSelectedTodo = useCallback(() => {
@@ -83,6 +93,7 @@ function App() {
       escape: handleEscape,
       delete: deleteSelectedTodo,
       backspace: deleteSelectedTodo,
+      'shift+?': openShortcutsHelp,
     }),
     [
       focusNewTodo,
@@ -92,6 +103,7 @@ function App() {
       switchToCompletedFilter,
       handleEscape,
       deleteSelectedTodo,
+      openShortcutsHelp,
     ]
   )
 
@@ -182,6 +194,11 @@ function App() {
           </ul>
         )}
       </div>
+
+      <KeyboardShortcutsHelp
+        isOpen={isShortcutsHelpOpen}
+        onClose={() => setIsShortcutsHelpOpen(false)}
+      />
     </div>
   )
 }
