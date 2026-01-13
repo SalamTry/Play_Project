@@ -27,6 +27,18 @@ const mockTodoMediumPriority = {
   priority: 'medium',
 }
 
+const mockTodoWithSubtasks = {
+  id: 'test-id-4',
+  title: 'Test todo with subtasks',
+  completed: false,
+  dueDate: null,
+  priority: null,
+  subtasks: [
+    { id: 'st-1', text: 'Subtask 1', completed: false },
+    { id: 'st-2', text: 'Subtask 2', completed: true },
+  ],
+}
+
 describe('EditTodoForm', () => {
   describe('rendering', () => {
     it('renders with the todo title pre-filled', () => {
@@ -275,6 +287,123 @@ describe('EditTodoForm', () => {
       expect(titleInput.id).toContain('test-id-1')
       expect(dateInput.id).toContain('test-id-1')
       expect(prioritySelect.id).toContain('test-id-1')
+    })
+  })
+
+  describe('subtasks functionality', () => {
+    it('renders SubtaskList component', () => {
+      render(<EditTodoForm todo={mockTodo} onSave={() => {}} onCancel={() => {}} />)
+
+      expect(screen.getByText('Subtasks')).toBeInTheDocument()
+      expect(screen.getByLabelText(/new subtask/i)).toBeInTheDocument()
+    })
+
+    it('renders existing subtasks from todo', () => {
+      render(<EditTodoForm todo={mockTodoWithSubtasks} onSave={() => {}} onCancel={() => {}} />)
+
+      expect(screen.getByText('Subtask 1')).toBeInTheDocument()
+      expect(screen.getByText('Subtask 2')).toBeInTheDocument()
+    })
+
+    it('can add a new subtask while editing', async () => {
+      const user = userEvent.setup()
+      render(<EditTodoForm todo={mockTodo} onSave={() => {}} onCancel={() => {}} />)
+
+      const subtaskInput = screen.getByLabelText(/new subtask/i)
+      await user.type(subtaskInput, 'New subtask')
+      await user.click(screen.getByRole('button', { name: /add subtask/i }))
+
+      expect(screen.getByText('New subtask')).toBeInTheDocument()
+    })
+
+    it('can toggle subtask completion while editing', async () => {
+      const user = userEvent.setup()
+      render(<EditTodoForm todo={mockTodoWithSubtasks} onSave={() => {}} onCancel={() => {}} />)
+
+      const checkbox = screen.getByLabelText(/mark "Subtask 1" as complete/i)
+      expect(checkbox).not.toBeChecked()
+
+      await user.click(checkbox)
+      expect(checkbox).toBeChecked()
+    })
+
+    it('can delete a subtask while editing', async () => {
+      const user = userEvent.setup()
+      render(<EditTodoForm todo={mockTodoWithSubtasks} onSave={() => {}} onCancel={() => {}} />)
+
+      expect(screen.getByText('Subtask 1')).toBeInTheDocument()
+
+      const deleteButton = screen.getByLabelText(/delete "Subtask 1"/i)
+      await user.click(deleteButton)
+
+      expect(screen.queryByText('Subtask 1')).not.toBeInTheDocument()
+    })
+
+    it('saves subtasks with form submission', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<EditTodoForm todo={mockTodoWithSubtasks} onSave={onSave} onCancel={() => {}} />)
+
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      expect(onSave).toHaveBeenCalledTimes(1)
+      expect(onSave.mock.calls[0][1].subtasks).toHaveLength(2)
+      expect(onSave.mock.calls[0][1].subtasks[0].text).toBe('Subtask 1')
+      expect(onSave.mock.calls[0][1].subtasks[1].text).toBe('Subtask 2')
+    })
+
+    it('saves modified subtasks after adding a new one', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<EditTodoForm todo={mockTodoWithSubtasks} onSave={onSave} onCancel={() => {}} />)
+
+      // Add a new subtask
+      const subtaskInput = screen.getByLabelText(/new subtask/i)
+      await user.type(subtaskInput, 'New subtask')
+      await user.click(screen.getByRole('button', { name: /add subtask/i }))
+
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      expect(onSave.mock.calls[0][1].subtasks).toHaveLength(3)
+      expect(onSave.mock.calls[0][1].subtasks[2].text).toBe('New subtask')
+      expect(onSave.mock.calls[0][1].subtasks[2].completed).toBe(false)
+    })
+
+    it('saves modified subtasks after toggling completion', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<EditTodoForm todo={mockTodoWithSubtasks} onSave={onSave} onCancel={() => {}} />)
+
+      // Toggle the first subtask
+      const checkbox = screen.getByLabelText(/mark "Subtask 1" as complete/i)
+      await user.click(checkbox)
+
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      expect(onSave.mock.calls[0][1].subtasks[0].completed).toBe(true)
+    })
+
+    it('saves modified subtasks after deleting one', async () => {
+      const user = userEvent.setup()
+      const onSave = vi.fn()
+      render(<EditTodoForm todo={mockTodoWithSubtasks} onSave={onSave} onCancel={() => {}} />)
+
+      // Delete the first subtask
+      const deleteButton = screen.getByLabelText(/delete "Subtask 1"/i)
+      await user.click(deleteButton)
+
+      await user.click(screen.getByRole('button', { name: /save/i }))
+
+      expect(onSave.mock.calls[0][1].subtasks).toHaveLength(1)
+      expect(onSave.mock.calls[0][1].subtasks[0].text).toBe('Subtask 2')
+    })
+
+    it('handles todo without subtasks array', () => {
+      render(<EditTodoForm todo={mockTodo} onSave={() => {}} onCancel={() => {}} />)
+
+      // Should render SubtaskList with empty array (no subtasks shown but add input visible)
+      expect(screen.getByText('Subtasks')).toBeInTheDocument()
+      expect(screen.queryByRole('list', { name: /subtasks/i })).not.toBeInTheDocument()
     })
   })
 })

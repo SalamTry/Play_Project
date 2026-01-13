@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { SubtaskList } from './SubtaskList'
 
 /**
  * Convert ISO date string to YYYY-MM-DD format for date input
@@ -20,6 +21,7 @@ function toDateInputValue(isoString) {
  * @param {boolean} props.todo.completed - Whether todo is completed
  * @param {string|null} props.todo.dueDate - Optional due date as ISO string
  * @param {'high'|'medium'|'low'|null} props.todo.priority - Optional priority level
+ * @param {Array} props.todo.subtasks - Array of subtask objects with id, text, completed
  * @param {Function} props.onSave - Callback when save is clicked (id, updates)
  * @param {Function} props.onCancel - Callback when cancel is clicked
  */
@@ -27,6 +29,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
   const [title, setTitle] = useState(todo.title)
   const [dueDate, setDueDate] = useState(toDateInputValue(todo.dueDate))
   const [priority, setPriority] = useState(todo.priority || '')
+  const [subtasks, setSubtasks] = useState(todo.subtasks || [])
   const titleInputRef = useRef(null)
 
   // Focus the title input on mount
@@ -51,6 +54,7 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
       title: trimmedTitle,
       dueDate: dueDateValue,
       priority: priorityValue,
+      subtasks,
     })
   }
 
@@ -59,6 +63,27 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
       e.preventDefault()
       onCancel()
     }
+  }
+
+  function handleAddSubtask(text) {
+    const newSubtask = {
+      id: `subtask-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      text,
+      completed: false,
+    }
+    setSubtasks((prev) => [...prev, newSubtask])
+  }
+
+  function handleToggleSubtask(subtaskId) {
+    setSubtasks((prev) =>
+      prev.map((st) =>
+        st.id === subtaskId ? { ...st, completed: !st.completed } : st
+      )
+    )
+  }
+
+  function handleDeleteSubtask(subtaskId) {
+    setSubtasks((prev) => prev.filter((st) => st.id !== subtaskId))
   }
 
   return (
@@ -112,6 +137,19 @@ export function EditTodoForm({ todo, onSave, onCancel }) {
             <option value="low">Low</option>
           </select>
         </div>
+      </div>
+
+      {/* Subtasks section */}
+      <div className="border-t border-slate-200 dark:border-slate-700 pt-3">
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          Subtasks
+        </label>
+        <SubtaskList
+          subtasks={subtasks}
+          onToggle={handleToggleSubtask}
+          onDelete={handleDeleteSubtask}
+          onAdd={handleAddSubtask}
+        />
       </div>
 
       <div className="flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">
