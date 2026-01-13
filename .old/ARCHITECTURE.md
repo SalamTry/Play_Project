@@ -88,3 +88,27 @@ Colors: Tailwind defaults
 - **Context:** Need reliable tests for Ralph loops
 - **Decision:** Test behavior, not implementation; use Testing Library best practices
 - **Consequences:** Tests are stable across refactors
+
+### DECISION-004: Dark mode strategy
+- **Date:** 2025-01-13
+- **Context:** Need theme toggle with persistence
+- **Decision:** Use Tailwind 'class' strategy with useTheme hook
+- **Consequences:** Theme stored in localStorage, respects system preference, dark: variants on all components
+
+### DECISION-005: Priority levels
+- **Date:** 2025-01-13
+- **Context:** Need visual priority indicators for todos
+- **Decision:** Three levels - high (red-500), medium (yellow-500), low (green-500)
+- **Consequences:** Priority is optional (null default), displayed as colored badge
+
+### DECISION-006: Animation library
+- **Date:** 2025-01-13
+- **Context:** Need smooth list animations and micro-interactions
+- **Decision:** Use Framer Motion for animations
+- **Consequences:** Additional dependency, but provides declarative animation API
+
+### DECISION-007: Filter and search
+- **Date:** 2025-01-13
+- **Context:** Need to filter todos by status and search by text
+- **Decision:** useFilter hook manages filter state, debounced search
+- **Consequences:** Filtering is client-side only, instant feedback

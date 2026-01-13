@@ -1,5 +1,5 @@
 #!/bin/bash
-# Ralph Wiggum v2 - With Expert Improvements
+# Ralph v3 Simple - Autonomous Coding Loop
 # Usage: ./loop.sh <iterations> [plan|build]
 
 set -e
@@ -7,14 +7,15 @@ set -e
 # ═══════════════════════════════════════
 # Configuration
 # ═══════════════════════════════════════
-MAX_RETRIES_PER_TASK=3
-BLOCKED_THRESHOLD=3
+MAX_RETRIES=3
+RETRY_COUNT=0
+LAST_STORY=""
 
 # ═══════════════════════════════════════
-# Argument Parsing
+# Arguments
 # ═══════════════════════════════════════
 if [ -z "$1" ]; then
-    echo "Ralph Wiggum v2 - Autonomous Coding Loop"
+    echo "Ralph v3 - Simple Autonomous Loop"
     echo ""
     echo "Usage: ./loop.sh <iterations> [plan|build]"
     echo ""
@@ -33,33 +34,30 @@ if ! [[ "$MAX_ITERATIONS" =~ ^[0-9]+$ ]] || [ "$MAX_ITERATIONS" -eq 0 ]; then
 fi
 
 # ═══════════════════════════════════════
-# State Tracking
-# ═══════════════════════════════════════
-ITERATION=0
-CURRENT_TASK=""
-TASK_ATTEMPTS=0
-BLOCKED_COUNT=0
-LOG_FILE="ralph.log"
-
-# ═══════════════════════════════════════
-# Prompt Selection
+# Select Prompt
 # ═══════════════════════════════════════
 if [ "$MODE" = "plan" ]; then
     PROMPT_FILE="PROMPT_plan.md"
-    echo "🎯 Ralph v2: PLAN mode"
+    echo "📋 Ralph v3: PLAN mode"
 else
     PROMPT_FILE="PROMPT_build.md"
-    echo "🔨 Ralph v2: BUILD mode"
+    echo "🔨 Ralph v3: BUILD mode"
 fi
 
 echo "Max iterations: $MAX_ITERATIONS"
-echo "Max retries per task: $MAX_RETRIES_PER_TASK"
-echo "Log file: $LOG_FILE"
 echo "═══════════════════════════════════════"
+
+# Log session start
+echo "" >> progress.txt
+echo "═══════════════════════════════════════" >> progress.txt
+echo "SESSION: $(date '+%Y-%m-%d %H:%M') | MODE: $MODE" >> progress.txt
+echo "═══════════════════════════════════════" >> progress.txt
 
 # ═══════════════════════════════════════
 # Main Loop
 # ═══════════════════════════════════════
+ITERATION=0
+
 while [ $ITERATION -lt $MAX_ITERATIONS ]; do
     ITERATION=$((ITERATION + 1))
 
@@ -68,94 +66,93 @@ while [ $ITERATION -lt $MAX_ITERATIONS ]; do
     echo "🔄 ITERATION $ITERATION / $MAX_ITERATIONS"
     echo "═══════════════════════════════════════"
 
-    # Run Claude and capture output
-    OUTPUT=$(cat "$PROMPT_FILE" | claude -p \
-        --dangerously-skip-permissions \
-        --verbose 2>&1) || true
+    # Run Claude with prompt
+    OUTPUT=$(cat "$PROMPT_FILE" | claude -p --dangerously-skip-permissions 2>&1) || true
 
     echo "$OUTPUT"
-    echo "$OUTPUT" >> "$LOG_FILE"
 
     # ─────────────────────────────────────
-    # Parse Exit Codes
+    # Check: ALL_STORIES_COMPLETE
     # ─────────────────────────────────────
-
-    # Check: ALL_TASKS_COMPLETE
-    if echo "$OUTPUT" | grep -q "ALL_TASKS_COMPLETE"; then
+    if echo "$OUTPUT" | grep -q "ALL_STORIES_COMPLETE"; then
         echo ""
-        echo "🎉 ALL TASKS COMPLETE!"
+        echo "🎉 ALL STORIES COMPLETE!"
         echo "Total iterations: $ITERATION"
+        echo "[$(date '+%H:%M')] ALL_STORIES_COMPLETE" >> progress.txt
         exit 0
     fi
 
-    # Check: Status: COMPLETE in plan
-    if grep -q "^## Status: COMPLETE" IMPLEMENTATION_PLAN.md 2>/dev/null; then
+    # ─────────────────────────────────────
+    # Check: PLANNING_COMPLETE
+    # ─────────────────────────────────────
+    if echo "$OUTPUT" | grep -q "PLANNING_COMPLETE"; then
+        PLAN_INFO=$(echo "$OUTPUT" | grep -o "PLANNING_COMPLETE:.*" | head -1)
         echo ""
-        echo "🎉 Project marked COMPLETE!"
-        echo "Total iterations: $ITERATION"
+        echo "📋 $PLAN_INFO"
+        echo "[$(date '+%H:%M')] $PLAN_INFO" >> progress.txt
         exit 0
     fi
 
-    # Check: TASK_COMPLETE
-    if echo "$OUTPUT" | grep -q "TASK_COMPLETE:"; then
-        COMPLETED=$(echo "$OUTPUT" | grep -o "TASK_COMPLETE: TASK-[0-9]*" | tail -1)
+    # ─────────────────────────────────────
+    # Check: STORY_COMPLETE
+    # ─────────────────────────────────────
+    if echo "$OUTPUT" | grep -q "STORY_COMPLETE"; then
+        COMPLETED=$(echo "$OUTPUT" | grep -o "STORY_COMPLETE: US-[0-9]*" | tail -1)
         echo "✅ $COMPLETED"
-        TASK_ATTEMPTS=0
-        BLOCKED_COUNT=0
-        CURRENT_TASK=""
-    fi
-
-    # Check: TASK_BLOCKED
-    if echo "$OUTPUT" | grep -q "TASK_BLOCKED:"; then
-        BLOCKED=$(echo "$OUTPUT" | grep -o "TASK_BLOCKED: TASK-[0-9]*" | tail -1)
-        echo "⚠️  $BLOCKED"
-        BLOCKED_COUNT=$((BLOCKED_COUNT + 1))
-        TASK_ATTEMPTS=0
-        CURRENT_TASK=""
-
-        if [ $BLOCKED_COUNT -ge $BLOCKED_THRESHOLD ]; then
-            echo ""
-            echo "🛑 STOPPED: $BLOCKED_COUNT tasks blocked"
-            echo "Review BLOCKED.md for details"
-            exit 1
-        fi
+        echo "[$(date '+%H:%M')] $COMPLETED" >> progress.txt
+        RETRY_COUNT=0
+        LAST_STORY=""
     fi
 
     # ─────────────────────────────────────
-    # Retry Detection (same task stuck)
+    # Check: STORY_BLOCKED
     # ─────────────────────────────────────
-    NEW_TASK=$(grep -m1 "^\- \[ \] \*\*TASK-" IMPLEMENTATION_PLAN.md 2>/dev/null | grep -o "TASK-[0-9]*" || echo "")
+    if echo "$OUTPUT" | grep -q "STORY_BLOCKED"; then
+        BLOCKED_INFO=$(echo "$OUTPUT" | grep -o "STORY_BLOCKED: US-[0-9]* - .*" | tail -1)
+        echo "❌ $BLOCKED_INFO"
+        echo "[$(date '+%H:%M')] $BLOCKED_INFO" >> progress.txt
+        echo ""
+        echo "🛑 STOPPED: Story blocked after $MAX_RETRIES attempts"
+        exit 1
+    fi
 
-    if [ -n "$NEW_TASK" ]; then
-        if [ "$NEW_TASK" = "$CURRENT_TASK" ]; then
-            TASK_ATTEMPTS=$((TASK_ATTEMPTS + 1))
-            echo "⚡ Retry $TASK_ATTEMPTS/$MAX_RETRIES_PER_TASK for $CURRENT_TASK"
+    # ─────────────────────────────────────
+    # Stuck Detection (same story repeated)
+    # ─────────────────────────────────────
+    CURRENT_STORY=$(cat prd.json 2>/dev/null | grep -o '"id": "US-[0-9]*"' | head -1 | grep -o 'US-[0-9]*' || echo "")
 
-            if [ $TASK_ATTEMPTS -ge $MAX_RETRIES_PER_TASK ]; then
+    # Find first story with passes:false
+    NEXT_STORY=$(python3 -c "
+import json
+try:
+    with open('prd.json') as f:
+        data = json.load(f)
+    for s in data.get('stories', []):
+        if not s.get('passes', False):
+            print(s['id'])
+            break
+except: pass
+" 2>/dev/null || echo "")
+
+    if [ -n "$NEXT_STORY" ]; then
+        if [ "$NEXT_STORY" = "$LAST_STORY" ]; then
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "⚡ Retry $RETRY_COUNT/$MAX_RETRIES for $NEXT_STORY"
+
+            if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
                 echo ""
-                echo "🛑 STUCK: $CURRENT_TASK failed $MAX_RETRIES_PER_TASK times"
-                echo "- [$CURRENT_TASK] BLOCKED after $MAX_RETRIES_PER_TASK attempts" >> BLOCKED.md
-
-                # Mark as blocked in plan
-                sed -i.bak "s/- \[ \] \*\*$CURRENT_TASK/- [BLOCKED] **$CURRENT_TASK/" IMPLEMENTATION_PLAN.md
-
-                BLOCKED_COUNT=$((BLOCKED_COUNT + 1))
-                TASK_ATTEMPTS=0
-                CURRENT_TASK=""
-
-                if [ $BLOCKED_COUNT -ge $BLOCKED_THRESHOLD ]; then
-                    echo "🛑 STOPPED: Too many blocked tasks"
-                    exit 1
-                fi
+                echo "🛑 STOPPED: $NEXT_STORY stuck after $MAX_RETRIES iterations"
+                echo "[$(date '+%H:%M')] STUCK: $NEXT_STORY after $MAX_RETRIES iterations" >> progress.txt
+                exit 1
             fi
         else
-            CURRENT_TASK="$NEW_TASK"
-            TASK_ATTEMPTS=0
+            LAST_STORY="$NEXT_STORY"
+            RETRY_COUNT=0
         fi
     fi
 
     # ─────────────────────────────────────
-    # Git Push (if in build mode)
+    # Git Push
     # ─────────────────────────────────────
     if [ "$MODE" = "build" ]; then
         BRANCH=$(git branch --show-current 2>/dev/null || echo "")

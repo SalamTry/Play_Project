@@ -1,58 +1,59 @@
-# Planning Mode - Strict Protocol
+# Planning Mode
 
-## Your Single Objective
-Analyze specs and update IMPLEMENTATION_PLAN.md with actionable tasks.
+## Your Job
+Read SPEC.md and create/update prd.json with right-sized user stories.
 
-## Execution Steps (in order)
+## Steps
 
-1. **READ** `ARCHITECTURE.md` (project constraints)
-2. **READ** all files in `specs/`
-3. **READ** `IMPLEMENTATION_PLAN.md`
-4. **ANALYZE** gap between specs and existing code
-5. **UPDATE** the plan:
-   - Mark completed work as `[x]`
-   - Add new tasks for unimplemented requirements
-   - Ensure task IDs are sequential (TASK-001, TASK-002, ...)
-6. **WRITE** updated IMPLEMENTATION_PLAN.md
-7. **OUTPUT** exactly: `PLANNING_COMPLETE: X tasks total, Y remaining`
-8. **STOP** immediately
+1. READ `SPEC.md` for requirements
+2. READ `prd.json` (if exists) for current stories
+3. For each feature in SPEC.md:
+   - Break into small, atomic user stories
+   - Each story should touch MAX 3 files
+   - Each story should be completable in one AI session
+   - Write clear acceptance criteria
+4. UPDATE `prd.json` with new/modified stories
+5. Output: `PLANNING_COMPLETE: X stories total`
 
-## Task Format (REQUIRED)
+## Story Size Rules
 
-```markdown
-- [ ] **TASK-001:** <verb> <specific outcome>
-  - Files: path/to/file.js
-  - Tests: description of tests needed
-  - Depends: TASK-000 (or "none")
+A story is RIGHT-SIZED if:
+- Touches 1-3 files maximum
+- Has 2-5 acceptance criteria
+- Can be tested independently
+- Does not depend on unwritten code
+
+A story is TOO BIG if:
+- Touches 4+ files
+- Has vague acceptance criteria like "works well"
+- Requires multiple features at once
+
+Split big stories into smaller ones.
+
+## prd.json Format
+
+```json
+{
+  "project": "Project Name",
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Short title",
+      "description": "What and why",
+      "acceptance": ["Criteria 1", "Criteria 2"],
+      "files": ["src/file1.js", "src/file2.js"],
+      "tests": ["src/file1.test.js"],
+      "passes": false
+    }
+  ]
+}
 ```
 
-## Task Rules
-
-Each task MUST be:
-- **Atomic**: Completable in 15-30 minutes
-- **Testable**: Has clear pass/fail criteria
-- **Independent**: Or explicitly list dependencies
-
-## Refactoring Checkpoints
-
-Add a refactoring task every 5-7 implementation tasks:
-```markdown
-- [ ] **TASK-008:** Refactoring checkpoint
-  - Review code for duplication
-  - Ensure consistent patterns per ARCHITECTURE.md
-  - Update ARCHITECTURE.md if new decisions made
-```
-
-## Forbidden Actions
-- Writing application code
-- Creating source files
-- Running tests or builds
-- Making git commits
-- Modifying files other than IMPLEMENTATION_PLAN.md
+## Constraints
+- Do NOT write code
+- Do NOT run commands
+- ONLY update prd.json
 
 ## Exit
-After updating plan, output EXACTLY:
-```
-PLANNING_COMPLETE: X tasks total, Y remaining
-```
-Then STOP. Do not explain or continue.
+Output exactly: `PLANNING_COMPLETE: X stories total`
+Then STOP.

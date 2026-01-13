@@ -1,0 +1,199 @@
+{
+  "project": "Todo App Enhancement",
+  "created": "2025-01-13",
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Add priority field to todo model",
+      "description": "Extend useTodos hook to support priority field",
+      "acceptance": [
+        "useTodos hook accepts priority in addTodo",
+        "priority can be: high, medium, low, or null",
+        "priority persists to localStorage",
+        "updateTodo can change priority"
+      ],
+      "files": ["src/hooks/useTodos.js"],
+      "tests": ["src/hooks/useTodos.test.js"],
+      "passes": true
+    },
+    {
+      "id": "US-002",
+      "title": "Add priority dropdown to TodoForm",
+      "description": "Add priority selection when creating todos",
+      "acceptance": [
+        "Dropdown with options: None, Low, Medium, High",
+        "Default selection is None (null)",
+        "Priority passed to onAddTodo callback",
+        "Form resets priority after submit"
+      ],
+      "files": ["src/components/TodoForm.jsx"],
+      "tests": ["src/components/TodoForm.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-003",
+      "title": "Display priority badge on TodoItem",
+      "description": "Show colored priority indicator on todo items",
+      "acceptance": [
+        "High priority: rose-500 badge",
+        "Medium priority: amber-500 badge",
+        "Low priority: emerald-500 badge",
+        "No badge if priority is null"
+      ],
+      "files": ["src/components/TodoItem.jsx"],
+      "tests": ["src/components/TodoItem.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-004",
+      "title": "Add priority to EditTodoForm",
+      "description": "Allow editing priority of existing todos",
+      "acceptance": [
+        "Priority dropdown in edit form",
+        "Pre-filled with current priority",
+        "Updated priority saved on submit"
+      ],
+      "files": ["src/components/EditTodoForm.jsx"],
+      "tests": ["src/components/EditTodoForm.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-005",
+      "title": "Create useFilter hook",
+      "description": "Hook for filtering and searching todos",
+      "acceptance": [
+        "Exports: filter, setFilter, searchQuery, setSearchQuery, filterTodos",
+        "filter options: all, active, completed",
+        "filterTodos returns filtered array",
+        "Search is case-insensitive"
+      ],
+      "files": ["src/hooks/useFilter.js"],
+      "tests": ["src/hooks/useFilter.test.js"],
+      "passes": true
+    },
+    {
+      "id": "US-006",
+      "title": "Create FilterBar component",
+      "description": "UI for filtering todos by status",
+      "acceptance": [
+        "Three buttons: All, Active, Completed",
+        "Active button highlighted",
+        "Calls onFilterChange when clicked"
+      ],
+      "files": ["src/components/FilterBar.jsx"],
+      "tests": ["src/components/FilterBar.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-007",
+      "title": "Create SearchBar component",
+      "description": "Text input for searching todos",
+      "acceptance": [
+        "Input field with placeholder",
+        "Search icon",
+        "Clear button when text present",
+        "Debounced onChange (300ms)"
+      ],
+      "files": ["src/components/SearchBar.jsx"],
+      "tests": ["src/components/SearchBar.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-008",
+      "title": "Integrate filter and search in App",
+      "description": "Connect filter components to todo list",
+      "acceptance": [
+        "FilterBar and SearchBar rendered in App",
+        "Todo list responds to filter changes",
+        "Todo list responds to search query",
+        "Shows count of filtered results"
+      ],
+      "files": ["src/App.jsx"],
+      "tests": [],
+      "passes": true
+    },
+    {
+      "id": "US-009",
+      "title": "Create useTheme hook",
+      "description": "Theme management with localStorage",
+      "acceptance": [
+        "Exports: theme, toggleTheme, isDark",
+        "Persists to localStorage key 'theme'",
+        "Respects prefers-color-scheme on first load",
+        "Adds/removes 'dark' class on document.documentElement"
+      ],
+      "files": ["src/hooks/useTheme.js"],
+      "tests": ["src/hooks/useTheme.test.js"],
+      "passes": true
+    },
+    {
+      "id": "US-010",
+      "title": "Create ThemeToggle component",
+      "description": "Button to toggle dark mode",
+      "acceptance": [
+        "Sun icon in dark mode, moon icon in light mode",
+        "Accessible aria-label",
+        "Smooth icon transition"
+      ],
+      "files": ["src/components/ThemeToggle.jsx"],
+      "tests": ["src/components/ThemeToggle.test.jsx"],
+      "passes": true
+    },
+    {
+      "id": "US-011",
+      "title": "Apply dark mode to all components",
+      "description": "Add dark: variants throughout the app",
+      "acceptance": [
+        "App.jsx includes ThemeToggle in header",
+        "All components have dark: background variants",
+        "All components have dark: text variants",
+        "Smooth color transitions"
+      ],
+      "files": ["src/App.jsx", "src/components/TodoForm.jsx", "src/components/TodoItem.jsx", "src/components/TodoList.jsx", "src/components/EditTodoForm.jsx"],
+      "tests": [],
+      "passes": true
+    },
+    {
+      "id": "US-012",
+      "title": "Add Framer Motion animations",
+      "description": "Animate todo list items",
+      "acceptance": [
+        "framer-motion installed",
+        "Todo items fade in on add",
+        "Todo items fade out on delete",
+        "Smooth layout animations on reorder"
+      ],
+      "files": ["src/App.jsx", "package.json"],
+      "tests": [],
+      "passes": true
+    },
+    {
+      "id": "US-013",
+      "title": "Add micro-interactions",
+      "description": "Polish button and input interactions",
+      "acceptance": [
+        "Buttons have hover:scale effect",
+        "Buttons have active:scale effect",
+        "Inputs have focus ring",
+        "Cards have hover shadow"
+      ],
+      "files": ["src/components/TodoForm.jsx", "src/components/TodoItem.jsx", "src/components/FilterBar.jsx"],
+      "tests": [],
+      "passes": true
+    },
+    {
+      "id": "US-014",
+      "title": "Final polish and testing",
+      "description": "Ensure everything works together",
+      "acceptance": [
+        "All tests pass",
+        "Build succeeds",
+        "No console errors",
+        "Visual inspection passes"
+      ],
+      "files": [],
+      "tests": [],
+      "passes": true
+    }
+  ]
+}

@@ -14,9 +14,12 @@ while true; do
     echo ""
 
     # Progress
-    TOTAL=$(grep -c "^\- \[.\] \*\*TASK-" IMPLEMENTATION_PLAN.md 2>/dev/null || echo 0)
-    DONE=$(grep -c "^\- \[x\] \*\*TASK-" IMPLEMENTATION_PLAN.md 2>/dev/null || echo 0)
-    BLOCKED=$(grep -c "^\- \[BLOCKED\]" IMPLEMENTATION_PLAN.md 2>/dev/null || echo 0)
+    TOTAL=$(grep -c "^\- \[.\] \*\*TASK-" IMPLEMENTATION_PLAN.md 2>/dev/null | tr -d '\n' || echo 0)
+    DONE=$(grep -c "^\- \[x\] \*\*TASK-" IMPLEMENTATION_PLAN.md 2>/dev/null | tr -d '\n' || echo 0)
+    BLOCKED=$(grep -c "^\- \[BLOCKED\]" IMPLEMENTATION_PLAN.md 2>/dev/null | tr -d '\n' || echo 0)
+    [ -z "$TOTAL" ] && TOTAL=0
+    [ -z "$DONE" ] && DONE=0
+    [ -z "$BLOCKED" ] && BLOCKED=0
     REMAINING=$((TOTAL - DONE - BLOCKED))
 
     echo "📋 PROGRESS"

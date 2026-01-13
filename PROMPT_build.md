@@ -1,74 +1,78 @@
-# Build Mode - Single Task Execution
+# Build Mode
 
-## Your Single Objective
-Complete exactly ONE task from IMPLEMENTATION_PLAN.md.
+## Your Job
+Complete ONE user story from prd.json.
 
-## Execution Protocol
+## Steps
 
-### Phase 1: Task Selection
-1. READ `ARCHITECTURE.md` (follow these patterns)
-2. READ `IMPLEMENTATION_PLAN.md`
-3. FIND first task matching `- [ ] **TASK-XXX:**`
-4. IF no unchecked tasks:
-   - Change `## Status: IN PROGRESS` to `## Status: COMPLETE`
-   - Output: `ALL_TASKS_COMPLETE`
-   - STOP immediately
+### 1. Select Story
+- READ `prd.json`
+- FIND first story where `"passes": false`
+- IF all stories pass: output `ALL_STORIES_COMPLETE` and STOP
 
-### Phase 2: Implementation
-5. READ relevant spec from `specs/`
-6. READ existing related code
-7. IMPLEMENT the task following ARCHITECTURE.md patterns
-8. WRITE tests for new functionality
+### 2. Implement
+- READ existing code in story's files
+- IMPLEMENT to meet ALL acceptance criteria
+- WRITE tests if story has test files listed
+- Follow existing code patterns
 
-### Phase 3: Validation
-9. RUN tests: `npm run test:run`
-10. RUN build: `npm run build`
-11. IF tests/build FAIL:
-    - Attempt fix (max 3 internal attempts)
-    - IF still failing:
-      - Output: `TASK_BLOCKED: TASK-XXX - <reason>`
-      - STOP immediately
-      - Do NOT commit broken code
-
-### Phase 4: Completion
-12. COMMIT with message: `feat(TASK-XXX): <description>`
-13. UPDATE `IMPLEMENTATION_PLAN.md`:
-    - Change `- [ ]` to `- [x]` for this task
-14. UPDATE `ARCHITECTURE.md` if you made design decisions
-15. Output: `TASK_COMPLETE: TASK-XXX`
-16. STOP immediately
-
-## Quality Gates (ALL must pass)
+### 3. Validate (ALL MUST PASS)
 
 ```bash
-npm run test:run    # All tests pass
-npm run build       # Build succeeds
+# Check files exist
+ls <each file in story.files>
+
+# Run tests
+npm run test:run
+
+# Run build
+npm run build
 ```
 
-## Commit Message Format
+IF any fails:
+- Try to fix (max 3 attempts)
+- IF still failing after 3 attempts:
+  - Append to progress.txt: `[TIME] US-XXX: BLOCKED - reason`
+  - Output: `STORY_BLOCKED: US-XXX - reason`
+  - STOP (do NOT update prd.json)
 
-```
-feat(TASK-XXX): short description
+### 4. Complete
+1. COMMIT: `feat(US-XXX): title`
+2. UPDATE `prd.json`: set story's `"passes": true`
+3. APPEND to `progress.txt`:
+   ```
+   [TIME] US-XXX: COMPLETE
+   [TIME] Learned: any patterns or gotchas discovered
+   ```
+4. Output: `STORY_COMPLETE: US-XXX`
+5. STOP
 
-- Detail of what was implemented
-- Files changed
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-## Forbidden Actions
-- Working on multiple tasks
-- Skipping tests
-- Committing failing code
-- Modifying unrelated files
-- Ignoring ARCHITECTURE.md patterns
-
-## Exit Codes (REQUIRED - output exactly one)
+## Exit Codes (output exactly ONE, then STOP)
 
 | Situation | Output |
 |-----------|--------|
-| Task completed successfully | `TASK_COMPLETE: TASK-XXX` |
-| Task failed after retries | `TASK_BLOCKED: TASK-XXX - <reason>` |
-| No tasks remaining | `ALL_TASKS_COMPLETE` |
+| Story completed | `STORY_COMPLETE: US-XXX` |
+| Story failed 3x | `STORY_BLOCKED: US-XXX - reason` |
+| No stories left | `ALL_STORIES_COMPLETE` |
 
-## After outputting exit code, STOP. Do not explain or continue.
+## Forbidden
+- Working on multiple stories
+- Skipping validation
+- Committing broken code
+- Marking passes:true without validation passing
+
+## Progress.txt Format
+
+```
+═══════════════════════════════════════
+SESSION: YYYY-MM-DD HH:MM
+═══════════════════════════════════════
+[HH:MM] US-XXX: Started
+[HH:MM] US-XXX: COMPLETE
+[HH:MM] Learned: discovered pattern or gotcha
+───────────────────────────────────────
+[HH:MM] US-YYY: Started
+[HH:MM] US-YYY: BLOCKED - reason
+[HH:MM] Error: details of what went wrong
+═══════════════════════════════════════
+```
